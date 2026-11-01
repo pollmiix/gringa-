@@ -6,12 +6,17 @@
 <section class="checkout-form-column" aria-label="Contact and delivery">
 <form id="checkout-form">
 <h1>SECURE CHECKOUT</h1>
-<p>Continue to Stripe to enter your contact details, delivery address and card information, and review your total before paying.</p>
+<p>Continue to Stripe to enter your contact details, delivery address and payment information, and review your total before paying.</p>
 <h2>DELIVERY</h2>
 <div class="checkout-shipping-method"><span id="checkout-shipping-label"></span><span id="checkout-shipping-price"></span></div>
 <p class="connection-note">Delivery is available to Brazil, United States, United Kingdom, Canada, Portugal, Spain, France, Germany, Italy and Australia. Confirm product availability and shipping dates with the store before paying.</p>
 <h2>PAYMENT</h2>
-<p>Pay securely by credit or debit card. Your card details are entered directly on Stripe.</p>
+<div class="payment-method-overview" aria-label="Payment options on Stripe">
+<div><strong>Cards</strong><span>Credit and debit</span></div>
+<div><strong>Digital wallets</strong><span>On supported devices</span></div>
+<div><strong>Local payment methods</strong><span>Where available</span></div>
+</div>
+<p>Choose your payment method on Stripe. Available options depend on your country, currency and device. Your payment details are entered securely on Stripe.</p>
 <button type="submit" class="checkout-pay" id="checkout-pay">Continue to secure payment</button>
 <p class="checkout-feedback" id="checkout-feedback" role="status" hidden></p>
 </form><a class="checkout-return" href="./index.html#colecao">‹ Continue shopping</a>

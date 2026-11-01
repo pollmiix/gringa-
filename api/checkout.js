@@ -56,7 +56,7 @@ async function handler(req, res) {
     res.setHeader('Allow', 'POST, GET');
     return reply(res, 405, { error: 'Method not allowed.' });
   }
-  const key = process.env.STRIPE_SECRET_KEY || '';
+  const key = (process.env.STRIPE_SECRET_KEY || '').trim();
   if (!/^(sk|rk)_(live|test)_[A-Za-z0-9]+$/.test(key)) {
     return reply(res, 503, { error: 'Payments are not available yet. Please try again later.' });
   }
@@ -100,7 +100,8 @@ async function handler(req, res) {
     cancel_url: `${origin}/checkout.html?payment=cancelled`,
     billing_address_collection: 'required',
     'phone_number_collection[enabled]': 'true',
-    'payment_method_types[0]': 'card',
+    // Let Stripe show eligible methods enabled in the merchant Dashboard.
+    // A fixed payment_method_types list would override that configuration.
     'metadata[store]': 'loja-gringa',
     'shipping_options[0][shipping_rate_data][type]': 'fixed_amount',
     'shipping_options[0][shipping_rate_data][fixed_amount][amount]': '0',

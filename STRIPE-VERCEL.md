@@ -23,7 +23,14 @@ Stripe e configure o novo token diretamente na Vercel.
 - O servidor oferece frete gratuito aos dez países listados no checkout.
   Frete pago ainda precisa ser implementado. Não há cálculo automático de
   impostos; configure a tributação adequada antes de abrir as vendas.
-- O checkout aceita cartão. Outros meios precisam de configuração específica.
+- O checkout utiliza os meios de pagamento dinâmicos da Stripe. Ative os métodos
+  desejados em https://dashboard.stripe.com/settings/payment_methods. A Stripe
+  mostra apenas opções elegíveis para a conta, moeda, país, valor e dispositivo
+  do cliente. Apple Pay e Google Pay também dependem do dispositivo/navegador.
+  Não é possível garantir que todos os meios apareçam em todas as compras.
+- Pix exige cobrança em BRL. Os preços atuais estão em EUR, portanto não basta
+  ativar Pix no painel: antes, defina os preços em reais e ajuste a moeda da loja.
+  Não troque apenas a sigla EUR para BRL mantendo os valores importados.
 - A chave precisa permitir criar e consultar Checkout Sessions e as operações
   de pagamento correspondentes. O modelo Pagamentos únicos é o ponto de partida.
 - Faça primeiro uma implantação de teste com uma chave rk_test_.../sk_test_...

@@ -59,6 +59,7 @@ test('checkout validation and Stripe boundary', async t => {
       assert.equal(url, 'https://api.stripe.com/v1/checkout/sessions');
       assert.equal(options.method, 'POST');
       const params = new URLSearchParams(options.body);
+      assert.equal([...params.keys()].some(key => key.startsWith('payment_method_types')), false, 'Stripe must choose eligible Dashboard-enabled payment methods');
       assert.equal(params.get('line_items[0][price_data][unit_amount]'), '11200');
       assert.equal(params.get('line_items[0][quantity]'), '2');
       assert.equal(params.get('line_items[0][price_data][currency]'), 'eur');
@@ -84,6 +85,8 @@ test('checkout validation and Stripe boundary', async t => {
     assert.equal(result.data.paid, false);
     global.fetch = async () => ({ ok: true, json: async () => ({ payment_status: 'paid', status: 'complete' }) });
     assert.equal((await call({ method: 'GET', query: { session_id: 'cs_test_example' } })).data.paid, true);
+    global.fetch = async () => ({ ok: true, json: async () => ({ payment_status: 'unpaid', status: 'complete' }) });
+    assert.equal((await call({ method: 'GET', query: { session_id: 'cs_test_example' } })).data.paid, false, 'Completion of a delayed payment checkout is not confirmation of funds');
     assert.equal((await call({ method: 'GET', query: { session_id: '../bad' } })).code, 400);
   });
   await t.test('Stripe failures do not leak upstream details or the key', async () => {
