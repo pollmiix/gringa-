@@ -1,0 +1,7 @@
+{
+  "name": "loja-gringa",
+  "private": true,
+  "version": "1.0.0",
+  "engines": { "node": "24.x" },
+  "scripts": { "test": "node --test tests/stripe-checkout.test.cjs" }
+}

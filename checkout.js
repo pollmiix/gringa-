@@ -5,6 +5,8 @@
   const products = new Map((window.STORE_PRODUCTS || []).map(product => [product.id,product]));
   const metadata = window.PRODUCT_DETAILS || {};
   const find = selector => document.querySelector(selector);
+  let submitting = false;
+  let paymentRequest = null;
   const brand = config.nome && config.nome !== 'YOUR STORE' ? config.nome : 'ALOHAS';
   document.title = `Checkout | ${brand}`;
   if (brand !== 'ALOHAS') { find('#checkout-brand').textContent = brand; find('#checkout-brand').style.cssText = 'font-size:32px;font-weight:bold'; }
@@ -14,7 +16,7 @@
     const items=cart.getItems();
     find('#checkout-main').hidden=!items.length;
     find('#checkout-empty').hidden=Boolean(items.length);
-    find('#checkout-pay').disabled=!items.length || cart.subtotal()===null;
+    find('#checkout-pay').disabled=submitting || !items.length || cart.subtotal()===null;
     const compact=document.createDocumentFragment();
     const detailed=document.createDocumentFragment();
     items.forEach(item => {
@@ -42,53 +44,50 @@
     find('#checkout-shipping-label').textContent=config.freteGratis===true ? config.freteDescricao || 'Free shipping' : 'Shipping options and costs will be confirmed before payment.';
     find('#checkout-shipping-price').textContent=config.freteGratis===true?'FREE':'To be confirmed';
   }
-  find('#checkout-discount').addEventListener('submit',event=>{event.preventDefault();find('#discount-feedback').hidden=false;find('#discount-feedback').textContent=find('#discount-code').value.trim()?'Discount codes and gift cards will be available after checkout setup is complete.':'Enter a discount code or gift card.';});
-  find('#checkout-form').addEventListener('submit',event=>{
+  find('#checkout-form').addEventListener('submit',async event=>{
     event.preventDefault();
-    if(!event.currentTarget.reportValidity())return;
-    // Integrate a server-created payment session here. The server must validate
-    // product IDs, sizes, quantities, prices, shipping and taxes independently.
-    // Keep provider secrets on the server; use provider-hosted payment fields.
+    if(submitting || !event.currentTarget.reportValidity())return;
+    const items = cart.getItems().map(({id,size,quantity})=>({id,size,quantity}));
+    if(!items.length || cart.subtotal()===null)return;
+    if(location.protocol !== 'https:') {
+      find('#checkout-feedback').hidden=false;
+      find('#checkout-feedback').textContent='Open the published store to continue to secure payment.';
+      return;
+    }
+    const fingerprint=JSON.stringify(items);
+    if(!paymentRequest || paymentRequest.fingerprint!==fingerprint)paymentRequest={fingerprint,id:crypto.randomUUID()};
+    submitting=true;
+    find('#checkout-pay').disabled=true;
+    find('#checkout-pay').textContent='Opening secure payment…';
     find('#checkout-feedback').hidden=false;
-    find('#checkout-feedback').textContent='Payment setup is not complete yet. No order has been placed and you have not been charged.';
+    find('#checkout-feedback').textContent='Please wait while we open Stripe Checkout.';
+    try {
+      const response=await fetch('/api/checkout',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({items,requestId:paymentRequest.id}),
+        signal:AbortSignal.timeout(25000)
+      });
+      const result=await response.json();
+      if(!response.ok)throw new Error(result.error || 'Unable to open secure payment. Please try again.');
+      const destination=new URL(result.url);
+      if(destination.origin!=='https://checkout.stripe.com')throw new Error('Unable to open secure payment.');
+      window.location.assign(destination.href);
+    } catch(error) {
+      find('#checkout-feedback').textContent=error.name==='TimeoutError' || error.name==='TypeError' ? 'Unable to connect. Please try again.' : error.message;
+      submitting=false;
+      find('#checkout-pay').textContent='Continue to secure payment';
+      render();
+    }
   });
-  // Contact and address values stay only in this page. They are not persisted,
-  // added to URLs, or sent anywhere while the payment service is disconnected.
   find('#checkout-summary-toggle').addEventListener('click',event=>{
     const expanded=event.currentTarget.getAttribute('aria-expanded')==='true';
     event.currentTarget.setAttribute('aria-expanded',String(!expanded));
     find('.checkout-summary').classList.toggle('is-expanded',!expanded);
   });
-  function updatePaymentMethod() {
-    document.querySelectorAll('.payment-method').forEach(row=>{
-      const radio=row.querySelector('input[name="paymentMethod"]');
-      row.classList.toggle('is-selected',radio.checked);
-      row.querySelector('.payment-method-panel').hidden=!radio.checked;
-    });
-    find('#checkout-feedback').hidden=true;
+  if(new URLSearchParams(location.search).get('payment')==='cancelled') {
+    find('#checkout-feedback').hidden=false;
+    find('#checkout-feedback').textContent='You returned from payment. Your shopping bag is still available. Check your payment status before trying again.';
   }
-  document.querySelectorAll('input[name="paymentMethod"]').forEach(radio=>radio.addEventListener('change',updatePaymentMethod));
-  function updateBillingAddress() {
-    const different=find('input[name="billingAddress"][value="different"]').checked;
-    find('#billing-fields').hidden=!different;
-    find('#billing-fields').disabled=!different;
-    document.querySelectorAll('.billing-option').forEach(row=>row.classList.toggle('is-selected',row.querySelector('input').checked));
-  }
-  document.querySelectorAll('input[name="billingAddress"]').forEach(radio=>radio.addEventListener('change',updateBillingAddress));
-  find('#save-checkout-info').addEventListener('change',event=>{
-    find('#checkout-save-feedback').hidden=!event.currentTarget.checked;
-    find('#checkout-save-feedback').textContent='Saving checkout information is not connected yet. Your details have not been saved.';
-  });
-  find('#checkout-save-not-now').addEventListener('click',()=>{
-    find('#save-checkout-info').checked=false;
-    find('#checkout-save-feedback').hidden=false;
-    find('#checkout-save-feedback').textContent='Your checkout information will not be saved.';
-  });
-  document.querySelectorAll('.payment-privacy-link').forEach(button=>button.addEventListener('click',()=>{
-    const dialog=find('#checkout-privacy-dialog');dialog.showModal();document.body.classList.add('modal-open');
-    dialog.addEventListener('close',()=>button.focus(),{once:true});
-  }));
-  updatePaymentMethod();updateBillingAddress();
   find('#checkout-copyright').textContent=`Copyright © ${new Date().getFullYear()} ${brand} All Rights Reserved.`;
   find('#checkout-chat').addEventListener('click',()=>{
     const phone=String(config.whatsapp || '').replace(/\D/g,'');

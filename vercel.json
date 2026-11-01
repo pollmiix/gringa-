@@ -1,0 +1,8 @@
+{
+  "functions": {
+    "api/checkout.js": {
+      "includeFiles": "{catalog.js,loja-config.js}",
+      "maxDuration": 30
+    }
+  }
+}
