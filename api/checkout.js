@@ -46,8 +46,30 @@ async function stripeRequest(route, key, options = {}) {
     signal: AbortSignal.timeout(20000)
   });
   const result = await response.json();
-  if (!response.ok) throw new Error('Stripe request failed.');
+  if (!response.ok) {
+    const error = new Error('Stripe request failed.');
+    error.stripeStatus = response.status;
+    error.stripeCode = result.error?.code;
+    error.stripeParameter = result.error?.param;
+    error.stripeRequestId = response.headers?.get('request-id');
+    throw error;
+  }
   return result;
+}
+
+function paymentFailure(error) {
+  const safe = value => typeof value === 'string' && /^[a-zA-Z0-9_[\].-]{1,150}$/.test(value) ? value : undefined;
+  const code = error.stripeStatus === 401 ? 'PAYMENT_AUTH'
+    : error.stripeStatus === 403 ? 'PAYMENT_PERMISSIONS'
+    : error.stripeStatus === 400 ? 'PAYMENT_CONFIGURATION'
+    : 'PAYMENT_CONNECTION';
+  const diagnostic = {
+    code, providerCode: safe(error.stripeCode),
+    parameter: safe(error.stripeParameter), requestId: safe(error.stripeRequestId)
+  };
+  // Never log credentials, customer data, request bodies or raw Stripe errors.
+  console.error('Stripe checkout failed', diagnostic);
+  return { error: `Unable to open secure payment. Please contact the store. Reference: ${code}.`, ...diagnostic };
 }
 
 async function handler(req, res) {
@@ -130,7 +152,7 @@ async function handler(req, res) {
     });
     if (!session.url || new URL(session.url).origin !== 'https://checkout.stripe.com') throw new Error();
     return reply(res, 200, { url: session.url });
-  } catch { return reply(res, 502, { error: 'Unable to open secure payment. Please try again later.' }); }
+  } catch (error) { return reply(res, 502, paymentFailure(error)); }
 }
 
 module.exports = handler;

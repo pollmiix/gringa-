@@ -96,4 +96,15 @@ test('checkout validation and Stripe boundary', async t => {
     assert.equal(result.code, 502);
     assert.doesNotMatch(JSON.stringify(result.data), /private upstream detail|placeholder/);
   });
+  await t.test('distinguishes authentication, permissions and invalid configuration without exposing Stripe messages', async () => {
+    for (const [status, code] of [[401, 'PAYMENT_AUTH'], [403, 'PAYMENT_PERMISSIONS'], [400, 'PAYMENT_CONFIGURATION']]) {
+      global.fetch = async () => ({ ok: false, status, headers: { get: () => 'req_example' }, json: async () => ({ error: { code: 'example_code', param: 'shipping_options[0]', message: 'private credential details' } }) });
+      const result = await call();
+      assert.equal(result.code, 502);
+      assert.equal(result.data.code, code);
+      assert.equal(result.data.requestId, 'req_example');
+      assert.equal(result.data.parameter, 'shipping_options[0]');
+      assert.doesNotMatch(JSON.stringify(result.data), /private credential details|placeholder/);
+    }
+  });
 });
