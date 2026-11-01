@@ -27,3 +27,12 @@
 @media(max-width:1500px){.size-dialog-heading,.size-dialog-content{width:90%}.size-dialog-content{gap:38px}}
 @media(max-width:1000px){.pdp-size-dialog,.pdp-size-dialog[open]{padding:35px 24px 28px}.pdp-size-dialog>.close{top:35px;right:20px}.size-dialog-heading,.size-dialog-content{width:100%}.size-dialog-content{gap:24px;padding-bottom:10px}}
 @media(max-width:650px){.pdp-size-dialog,.pdp-size-dialog[open]{height:calc(100dvh - 48px);padding:24px 18px 18px}.pdp-size-dialog>.close{top:24px;right:14px}.size-dialog-heading{margin-bottom:16px}.size-dialog-content{gap:12px;padding-bottom:0}.size-dialog-product{height:90px;max-height:90px;grid-template-columns:90px minmax(0,1fr)}.size-dialog-product img{height:90px;width:90px;max-height:90px}.size-dialog-product figcaption{padding:12px;font-size:12px}.size-option-shipping{line-height:1.2}#pdp-size-options .size-option{padding-top:1px;padding-bottom:1px}}
+
+/* Compact mobile size chooser. */
+@media(max-width:650px){
+  .pdp-size-dialog,.pdp-size-dialog[open]{inset:auto 0 0;margin:0;height:auto;max-height:calc(100vh - 48px);max-height:calc(100dvh - 48px);overflow-y:auto;overscroll-behavior:contain;padding-bottom:max(18px,env(safe-area-inset-bottom))}
+  .size-dialog-content{display:flex;flex-direction:column;flex:0 0 auto;gap:12px;min-height:0;align-items:stretch}
+  .size-dialog-product{flex:0 0 auto}
+  #pdp-size-options{display:flex;flex-direction:column;flex:0 0 auto;height:auto;max-height:none;overflow:visible;gap:0}
+  #pdp-size-options .size-option{flex:0 0 auto;min-height:56px;padding:12px 8px}
+}
