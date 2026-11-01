@@ -21,4 +21,5 @@
 .product-meta{flex-wrap:wrap;gap:6px 10px}.product-meta>.sale-price{margin-left:auto}
 #pdp-price.sale-price{max-width:190px;white-space:normal}
 
-.store-wordmark{display:inline-block;color:#111;font-family:Arial,sans-serif;font-size:28px;font-weight:700;letter-spacing:-1px;line-height:1.1;text-decoration:none}#checkout-brand.store-wordmark{font-size:32px}
+@font-face{font-family:'Store Wordmark';src:url('./fonts/Anton-Regular.ttf') format('truetype');font-style:normal;font-weight:400;font-display:swap}
+.store-wordmark{display:inline-block;color:#111;font-family:'Store Wordmark',Impact,'Arial Narrow',sans-serif;font-size:28px;font-weight:400;font-synthesis:none;letter-spacing:-.4px;line-height:1.1;text-decoration:none;text-transform:uppercase}#checkout-brand.store-wordmark{font-size:32px}
