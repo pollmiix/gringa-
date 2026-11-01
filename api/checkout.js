@@ -122,9 +122,9 @@ async function handler(req, res) {
     cancel_url: `${origin}/checkout.html?payment=cancelled`,
     billing_address_collection: 'required',
     'phone_number_collection[enabled]': 'true',
-    // Wallets use card support; allow only cards and Link in new sessions.
+    // Apple Pay, Google Pay and Dashboard-enabled Link use card support.
+    // Do not force Link as a separate type: some accounts reject that type.
     'payment_method_types[0]': 'card',
-    'payment_method_types[1]': 'link',
     'metadata[store]': 'loja-gringa',
     'shipping_options[0][shipping_rate_data][type]': 'fixed_amount',
     'shipping_options[0][shipping_rate_data][fixed_amount][amount]': '0',
