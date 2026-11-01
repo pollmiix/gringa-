@@ -59,7 +59,8 @@ test('checkout validation and Stripe boundary', async t => {
       assert.equal(url, 'https://api.stripe.com/v1/checkout/sessions');
       assert.equal(options.method, 'POST');
       const params = new URLSearchParams(options.body);
-      assert.equal([...params.keys()].some(key => key.startsWith('payment_method_types')), false, 'Stripe must choose eligible Dashboard-enabled payment methods');
+      const methods = [...params].filter(([key]) => key.startsWith('payment_method_types')).map(([,value]) => value);
+      assert.deepEqual(methods, ['card', 'link'], 'Only cards, their supported wallets, and Link are allowed; Pix and boleto must not be offered');
       assert.equal(params.get('line_items[0][price_data][unit_amount]'), '11200');
       assert.equal(params.get('line_items[0][quantity]'), '2');
       assert.equal(params.get('line_items[0][price_data][currency]'), 'eur');

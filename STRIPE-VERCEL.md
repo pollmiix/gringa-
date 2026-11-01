@@ -23,18 +23,12 @@ Stripe e configure o novo token diretamente na Vercel.
 - O servidor oferece frete gratuito aos dez países listados no checkout.
   Frete pago ainda precisa ser implementado. Não há cálculo automático de
   impostos; configure a tributação adequada antes de abrir as vendas.
-- O checkout utiliza os meios de pagamento dinâmicos da Stripe. Ative os métodos
-  desejados em https://dashboard.stripe.com/settings/payment_methods. A Stripe
-  mostra apenas opções elegíveis para a conta, moeda, país, valor e dispositivo
-  do cliente. Apple Pay e Google Pay também dependem do dispositivo/navegador.
-  Não é possível garantir que todos os meios apareçam em todas as compras.
-- Pix e boleto exigem cobrança em BRL. Os preços atuais estão em EUR, portanto
-  não basta ativá-los no painel: defina os preços em reais e ajuste a moeda da loja.
-  Não troque apenas a sigla EUR para BRL mantendo os valores importados.
-- A página lista Cartões, Apple Pay, Google Pay, Link, Boleto e Pix como opções
-  da integração. A escolha efetiva acontece no checkout hospedado da Stripe.
-  A indicação sobre BRL acompanha a moeda configurada; os logotipos e nomes não
-  significam que métodos incompatíveis com a compra serão oferecidos.
+- O checkout oferece cart?es, Apple Pay, Google Pay e Link. A API permite
+  somente os tipos card e link nas novas sess?es; as carteiras Apple Pay e
+  Google Pay usam o suporte a cart?o e dependem do dispositivo/navegador.
+- Pix e boleto foram removidos da loja e n?o s?o permitidos nas novas sess?es,
+  mesmo que permane?am habilitados no painel da Stripe. Sess?es antigas n?o
+  s?o alteradas por esta atualiza??o. Os pre?os continuam em EUR.
 - A chave precisa permitir criar e consultar Checkout Sessions e as operações
   de pagamento correspondentes. O modelo Pagamentos únicos é o ponto de partida.
 - Faça primeiro uma implantação de teste com uma chave rk_test_.../sk_test_...
