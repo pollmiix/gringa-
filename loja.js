@@ -2,7 +2,7 @@
 const config = window.LOJA_CONFIG || {};
 const products = Array.isArray(window.STORE_PRODUCTS) ? window.STORE_PRODUCTS : [];
 const $ = selector => document.querySelector(selector);
-const brand = config.nome || 'Arezzo';
+const brand = config.nome || 'ALOHAS';
 if (config.reducaoPrecosPercentual > 0 && config.descontoAdicionalPercentual > 0) {
   $('.announcement').textContent = `Prices reduced by ${config.reducaoPrecosPercentual}% + extra ${config.descontoAdicionalPercentual}% off. Applied automatically.`;
 }
