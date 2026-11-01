@@ -20,3 +20,5 @@
 .sale-price small{display:inline-block;font-size:10px;font-weight:600;white-space:nowrap;background:#f2eee9;color:#684c39;padding:1px 5px}
 .product-meta{flex-wrap:wrap;gap:6px 10px}.product-meta>.sale-price{margin-left:auto}
 #pdp-price.sale-price{max-width:190px;white-space:normal}
+
+.store-wordmark{display:inline-block;color:#111;font-family:Arial,sans-serif;font-size:28px;font-weight:700;letter-spacing:-1px;line-height:1.1;text-decoration:none}#checkout-brand.store-wordmark{font-size:32px}

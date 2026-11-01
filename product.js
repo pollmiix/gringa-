@@ -5,7 +5,7 @@ const metadata = window.PRODUCT_DETAILS || {};
 const collections = window.STORE_COLLECTIONS || [];
 const $ = selector => document.querySelector(selector);
 const productURL = product => `./product.html?product=${encodeURIComponent(product.id)}`;
-const brand = config.nome || 'YOUR STORE';
+const brand = config.nome || 'Arezzo';
 document.querySelectorAll('[data-brand]').forEach(el => { el.textContent = brand; });
 $('#year').textContent = new Date().getFullYear();
 function price(product) {

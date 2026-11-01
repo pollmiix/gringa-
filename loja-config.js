@@ -1,7 +1,7 @@
 
 // Store identity. All storefront files and product images use local paths.
 window.LOJA_CONFIG = {
-  nome: 'YOUR STORE',
+  nome: 'Arezzo',
   // Optional contact number with country code; digits only.
   whatsapp: '',
   // Public Stripe key. Checkout still requires a server integration.

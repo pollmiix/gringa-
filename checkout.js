@@ -10,9 +10,10 @@
   }
   let submitting = false;
   let paymentRequest = null;
-  const brand = config.nome && config.nome !== 'YOUR STORE' ? config.nome : 'ALOHAS';
+  const brand = config.nome || 'Arezzo';
   document.title = `Checkout | ${brand}`;
-  if (brand !== 'ALOHAS') { find('#checkout-brand').textContent = brand; find('#checkout-brand').style.cssText = 'font-size:32px;font-weight:bold'; }
+  find('#checkout-brand').textContent = brand;
+  find('#checkout-brand').setAttribute('aria-label',`${brand} home`);
   find('#checkout-bag').addEventListener('click',event => cart.open(event.currentTarget));
   const node = (tag,className,text) => { const element=document.createElement(tag); if(className) element.className=className; if(text!==undefined) element.textContent=text; return element; };
   function render() {
