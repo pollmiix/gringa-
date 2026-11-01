@@ -52,14 +52,6 @@ async function stripeRequest(route, key, options = {}) {
     error.stripeCode = result.error?.code;
     error.stripeParameter = result.error?.param;
     error.stripeRequestId = response.headers?.get('request-id');
-    // This field concerns only method configuration, never payment/customer data.
-    if (response.status === 400 && error.stripeParameter === 'payment_method_types') {
-      error.methodConfiguration = String(result.error?.message || '')
-        .split(key).join('[redacted]')
-        .replace(/\b(?:sk|rk|pk|mk|whsec|acct|cus|pi|cs|tok)_[A-Za-z0-9_]+/g, '[redacted]')
-        .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, '[redacted]')
-        .slice(0, 600);
-    }
     throw error;
   }
   return result;
@@ -73,8 +65,7 @@ function paymentFailure(error) {
     : 'PAYMENT_CONNECTION';
   const diagnostic = {
     code, providerCode: safe(error.stripeCode),
-    parameter: safe(error.stripeParameter), requestId: safe(error.stripeRequestId),
-    methodConfiguration: error.methodConfiguration
+    parameter: safe(error.stripeParameter), requestId: safe(error.stripeRequestId)
   };
   // Never log credentials, customer data, request bodies or raw Stripe errors.
   console.error('Stripe checkout failed', diagnostic);
@@ -131,9 +122,8 @@ async function handler(req, res) {
     cancel_url: `${origin}/checkout.html?payment=cancelled`,
     billing_address_collection: 'required',
     'phone_number_collection[enabled]': 'true',
-    // Apple Pay, Google Pay and Dashboard-enabled Link use card support.
-    // Do not force Link as a separate type: some accounts reject that type.
-    'payment_method_types[0]': 'card',
+    // Current Stripe API versions manage payment methods in the Dashboard.
+    // Keep Pix and boleto disabled there; do not send payment_method_types.
     'metadata[store]': 'loja-gringa',
     'shipping_options[0][shipping_rate_data][type]': 'fixed_amount',
     'shipping_options[0][shipping_rate_data][fixed_amount][amount]': '0',

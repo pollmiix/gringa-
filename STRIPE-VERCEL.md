@@ -23,13 +23,12 @@ Stripe e configure o novo token diretamente na Vercel.
 - O servidor oferece frete gratuito aos dez países listados no checkout.
   Frete pago ainda precisa ser implementado. Não há cálculo automático de
   impostos; configure a tributação adequada antes de abrir as vendas.
-- O checkout oferece cartoes, Apple Pay, Google Pay e Link. A API usa o tipo
-  card nas novas sessoes. Apple Pay, Google Pay e Link habilitado no painel
-  usam o suporte a cartao, conforme elegibilidade e dispositivo. Link nao e
-  imposto como tipo separado para evitar rejeicao em contas incompativeis.
-- Pix e boleto foram removidos da loja e n?o s?o permitidos nas novas sess?es,
-  mesmo que permane?am habilitados no painel da Stripe. Sess?es antigas n?o
-  s?o alteradas por esta atualiza??o. Os pre?os continuam em EUR.
+- A loja exibe cartoes, Apple Pay, Google Pay e Link. Os metodos efetivamente
+  oferecidos sao controlados no Dashboard da Stripe, conforme elegibilidade.
+  A API atual da conta rejeita payment_method_types; esse parametro nao deve
+  ser enviado ao criar a sessao de checkout.
+- Mantenha Pix e boleto desativados em Settings > Payment methods na Stripe.
+  Eles foram removidos da pagina. Os precos continuam em EUR.
 - A chave precisa permitir criar e consultar Checkout Sessions e as operações
   de pagamento correspondentes. O modelo Pagamentos únicos é o ponto de partida.
 - Faça primeiro uma implantação de teste com uma chave rk_test_.../sk_test_...
