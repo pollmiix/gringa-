@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+node_modules/
+catalog-source/
+.codex/
+.agents/
+.aws/
+*.pem
+*.key
+Thumbs.db
+Desktop.ini

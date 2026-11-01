@@ -1,0 +1,234 @@
+YOUR STORE — LOCAL STOREFRONT
+
+Open index.html in a browser. No installation or build step is needed.
+
+CATALOGUE
+242 products across 17 categories were imported from the public store.
+The import was checked against the product sitemap: no missing products.
+Names, categories, listed sizes, prices and all 1,737 product photos are local.
+Prices were imported in EUR. This is a snapshot, not a live stock feed.
+Listed sizes do not guarantee availability. No payment or checkout is connected.
+
+CUSTOMISE
+Edit loja-config.js to change the store name and optional WhatsApp number.
+Use product handles from catalog.js as keys in the precos object to set prices.
+Changing the currency code does not convert imported prices. For another
+currency, set your own prices and set usarPrecosImportados to false.
+The page, product names, filters, buttons and messages are in English.
+
+PUBLISH ON YOUR DOMAIN
+Upload ONLY these files and folders to the public directory of your host:
+- index.html
+- loja.css
+- store-cart.css
+- store-cart.js
+- checkout.html
+- checkout.css
+- checkout.js
+- loja.js
+- loja-config.js
+- catalog.js
+- gallery.js
+- product.html
+- product.css
+- product.js
+- product-data.js
+- collections.js
+- product-placeholder.svg
+- alohas-logo-png.png
+- bags-hero-desktop.jpg
+- bags-hero-mobile.jpg
+- campaign-fw26-desktop.jpg
+- campaign-fw26-mobile.jpg
+- campaign-loafers-desktop.jpg
+- campaign-loafers-mobile.jpg
+- focuscarrusel_south.jpg
+- focuscarrusel_sajan.jpg
+- FW26_FOCUSCARRUSEL_HOME_DESKTOP.jpg
+- ROSALIND_FOCUSCARRUSEL_HOME_DESKTOP.jpg
+- MAN_FOCUSCARRUSEL_4_DESKTOP.jpg
+- product-images/ (all 242 thumbnails)
+- product-gallery/ (all detailed product photos)
+
+All paths are relative. Configure your domain and DNS through your host.
+No hosting, DNS or payment settings were changed.
+Do not upload catalog-source/, import-catalog.ps1 or the old downloaded scripts.
+Unused original-store assets and temporary test files have been removed.
+
+IMPORT RECORDS
+catalog-source/import-report.json records product counts and categories.
+import-catalog.ps1 can refresh the public catalogue and images. It overwrites
+catalog.js; keep price overrides and store identity in loja-config.js.
+
+CATEGORY NAVIGATION
+Our categories contains eight cards in this order:
+- Bags: index.html?collection=bags#colecao (19 products)
+- Ballet Flats: index.html?collection=ballet-flats#colecao (66 products)
+- Sneakers: index.html?collection=sneakers#colecao (64 products)
+- Loafers: index.html?collection=loafers#colecao (19 products)
+- Boots: index.html?collection=boots#colecao (28 products)
+- Sandals: index.html?collection=sandals#colecao (27 products)
+- Barefoot: index.html?collection=barefoot-shoes#colecao (7 products)
+- Heels: index.html?collection=heels#colecao (10 products)
+
+collections.js defines the category covers, labels and exact product membership
+from the public collection feeds, including their featured product order.
+Collections can overlap: Barefoot includes sneakers and ballet flats; Heels
+includes pumps and heeled sandals; Boots also includes ankle boots.
+A product appears once in Shop all, and in every collection it belongs to.
+All remaining product types remain accessible through the Category selector.
+Cards and header links scroll horizontally on smaller screens.
+If refreshing catalog.js, refresh collection membership when the source changes.
+
+The eight category cards now stay in one horizontal row on every screen.
+Use the Previous/Next arrow buttons, keyboard arrows on the carousel, or swipe.
+Three cards are visible on desktop; mobile shows one card and part of the next.
+
+HEADER
+The header now has MENU on the left, a centered local logo, and SEARCH_,
+PROFILE, Wishlist and Shopping bag actions on the right.
+MENU opens the category drawer. SEARCH_ opens the catalogue search.
+Profile, Wishlist and Bag show informational panels; they do not implement
+accounts, saved favourites, checkout or payment processing.
+On mobile, profile and search use compact icons to fit the screen.
+
+
+BAGS BANNER
+A full-width photo banner sits directly below the header. BAGS opens the local
+bags collection. The banner uses separate local images for desktop and mobile.
+
+
+FEATURED PRODUCTS
+Nine selected products appear directly below the Bags photo banner, in the
+reference order, with carousel arrows. Four cards fit on desktop; mobile shows
+one card with a preview of the next. Cards open local product details.
+Prices use the same catalogue values and configured overrides as other cards.
+Colour counts follow the supplied reference; availability is on request.
+
+The featured carousel now has 10 products, including Sue Suede Brown Leather Bag
+with the NEW IN label and 2 colours from the supplied reference.
+
+
+CAMPAIGN BANNERS
+The FW 26' and LOAFERS photo banners appear in a two-slide carousel below
+the featured products. Use the arrows, indicators or left/right keyboard keys.
+The sneaker banner opens Sneakers; the loafer banner opens Loafers locally.
+Desktop and mobile photos are stored in the project folder.
+
+
+
+TOP FINDS
+TOP FINDS appears directly below Our categories. The arrows cycle through
+South Bicolor, Sajan Vintage Effect Black and Aven Lace Vintage Effect Brown.
+Each slide pairs a local editorial photo with its matching product photo.
+Both photos open the matching local product details. Prices follow the same
+imported catalogue and overrides; availability remains on request.
+On mobile, the editorial photo appears above the product photo.
+
+
+TOP FINDS now includes five paired highlights, adding Rosalind All Studs Cream
+and Aven Rift Burgundy after the original three. Both editorial photos are local.
+
+
+
+DETAILED PRODUCT PHOTOS
+The catalogue thumbnails, category cards and TOP FINDS photos now show the
+full image without cropping. TOP FINDS text is below its image.
+Product details include all imported photos, previous/next buttons, thumbnails,
+keyboard arrows and an Open full-size image link. Photos use local files in
+product-gallery/ at up to 1800 pixels wide, limited by source resolution.
+The five TOP FINDS editorial photos were upgraded to larger source files.
+Run upgrade-product-images.ps1 after refreshing the source catalogue to rebuild
+the gallery manifest. Upload gallery.js and the entire product-gallery/ folder.
+
+
+Gallery import completed: 242 products, 1,737 photos, no missing files.
+Browser checks: 27 checks passed on desktop and 27 on mobile viewport.
+
+
+FOOTER
+The footer contains six expandable menus, the eight collection links, newsletter
+email/consent fields, copyright and customer-service/feedback information panels.
+The Join button requires a valid email and consent. Newsletter submission is not
+connected to a mailing service: it shows an unavailable message and does not
+save or send email addresses. Connect a service before enabling real sign-ups.
+Policy and store links display availability information until real store details
+and policies are supplied. Customer service uses the configured WhatsApp number
+when present. The page does not send visitors to the original store.
+
+
+INDIVIDUAL PRODUCT PAGES
+Every catalogue card, featured product and TOP FINDS item now opens a local
+product.html?product=PRODUCT-HANDLE page, rather than the previous popup.
+The shared product page supports all 242 products and uses their own gallery,
+listed sizes, imported prices, structured details and matching colour variants.
+The reference layout has two photo columns and a sticky information panel.
+Mobile uses a horizontal photo gallery. Clicking a photo opens full-size viewing.
+Size selection and browser-saved wishlist work. Product enquiries use your
+configured WhatsApp number. Checkout and payments are not connected.
+The catalogue shows seven rows per batch: 28 desktop, 21 tablet, 14 mobile.
+The Load more products button reveals another batch.
+Rebuild product.html and product-data.js with build-product-pages.ps1 after
+changing the shared header/footer or source catalogue. product-template.html
+is a build input; upload product.html, product.css, product.js and product-data.js.
+
+
+PRODUCT RECOMMENDATIONS
+Every valid product page includes RECOMMENDED FOR YOU after the product details
+and before the footer. The horizontal carousel shows up to 12 unique products,
+excluding the current product, with image, price, colour count and availability.
+Suggestions combine featured picks and related product categories. Every card
+opens its own local product page. Arrows, keyboard navigation and touch scrolling
+are supported. Images remain uncropped. Desktop shows four cards; mobile shows
+one card and part of the next.
+
+Product information headings now use 16px text on every screen, with 14px
+expanded details. Recommended picks also include Aven Rift Burgundy and
+Aven Vintage Effect Brown from the additional supplied references.
+
+
+SHOPPING BAG
+The shared shopping bag opens as a right-side drawer on catalogue and product
+pages. Select a size, then use ADD TO BAG. Quantity, removal, totals, header
+item counts and recommended products update immediately. Choices are saved
+in this browser. Local file previews also carry bag selections between the
+storefront pages; no customer contact details are stored in that navigation.
+The drawer has fixed shipping/subtotal/checkout controls and a scrollable body.
+Shipping is calculated at checkout by default. Set freteGratis to true in
+loja-config.js only if your store actually offers free shipping.
+The Check Out button does not process orders or payments. Until a checkout
+service is connected, it shows an unavailable message and keeps the items.
+Upload store-cart.js and store-cart.css with the other storefront files.
+
+
+Cart item photos now use 42% of the row width with uncropped high-resolution
+images. Names, sizes and prices are larger, and the remove action uses an X.
+
+Size selection: every product uses a large responsive chooser with its full photo, name, listed sizes and current configured price. Choose a size, then Add to Bag; Change size reopens the chooser. Stock and shipping dates require confirmation.
+
+CHECKOUT
+Check Out opens checkout.html with the current cart, sizes and quantities.
+The responsive English page includes contact/delivery fields and order summary.
+Express wallets are visual placeholders and disabled until connected. Discounts,
+shipping and taxes are not calculated yet. Submit validates the contact/address
+form and explains that payment is not connected; it never places an order.
+Customer address/email data is not saved or sent anywhere. Marketing consent is
+unchecked by default and is not submitted to a mailing list.
+To enable payment later, connect a backend that creates payment sessions with
+your provider. Revalidate item prices, quantities, shipping and taxes server-side;
+use hosted payment fields and webhooks. Never put secret keys in loja-config.js.
+
+Checkout footer: six expandable FAQ entries, customer service Chat Now (uses configured WhatsApp), current-year copyright and a privacy information dialog. Replace provisional FAQ answers and publish your full privacy policy before opening ordering.
+
+Payment section: selectable card, Apple Pay, PayPal and Klarna placeholders; no provider connected and no raw card inputs. Different billing address fields enable and become required only when selected. Save-information preference does not store customer data. Pay now validates the form and confirms that no charge or order occurred.
+
+Shipping display configured as requested: free worldwide DHL shipping, 1–3 Business Days. Set freteGratis and freteDescricao in loja-config.js to update this display. Carrier booking and shipping rate integration are not connected.
+
+CLEANUP — 2026-11-01
+Removed 311 unused files (26.12 MiB): old downloaded scripts/styles, unused
+images, temporary downloads, screenshots and historical test reports.
+All 2,016 retained files were verified unchanged by SHA-256 before updating
+this document. The 242 product thumbnails and 1,737 detailed photos remain.
+Homepage, product size selection/add-to-bag and checkout passed 16 browser checks.
+The catalogue source pages and import report remain in catalog-source because
+the product builder and image maintenance scripts use those source records.
