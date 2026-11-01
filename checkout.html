@@ -11,12 +11,16 @@
 <div class="checkout-shipping-method"><span id="checkout-shipping-label"></span><span id="checkout-shipping-price"></span></div>
 <p class="connection-note">Delivery is available to Brazil, United States, United Kingdom, Canada, Portugal, Spain, France, Germany, Italy and Australia. Confirm product availability and shipping dates with the store before paying.</p>
 <h2>PAYMENT</h2>
-<div class="payment-method-overview" aria-label="Payment options on Stripe">
-<div><strong>Cards</strong><span>Credit and debit</span></div>
-<div><strong>Digital wallets</strong><span>On supported devices</span></div>
-<div><strong>Local payment methods</strong><span>Where available</span></div>
+<div class="payment-method-overview payment-method-overview-six" aria-label="Payment options on Stripe">
+<div><span class="payment-option-mark" aria-hidden="true"><svg viewBox="0 0 32 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="1" width="30" height="22" rx="3"/><path d="M2 8h28M6 17h7"/></svg></span><strong>Cards</strong><span>Credit and debit</span></div>
+<div><span class="payment-option-mark" aria-hidden="true">Apple Pay</span><strong>Apple Pay</strong><span>Compatible Apple devices</span></div>
+<div><span class="payment-option-mark" aria-hidden="true">Google Pay</span><strong>Google Pay</strong><span>Supported devices and browsers</span></div>
+<div><span class="payment-option-mark payment-option-link" aria-hidden="true">Link</span><strong>Link</strong><span>Faster checkout with saved details</span></div>
+<div><span class="payment-option-mark" aria-hidden="true"><svg viewBox="0 0 38 24" fill="currentColor"><path d="M1 2h2v20H1zm4 0h1v20H5zm3 0h3v20H8zm5 0h1v20h-1zm3 0h2v20h-2zm4 0h1v20h-1zm3 0h3v20h-3zm5 0h2v20h-2zm4 0h1v20h-1zm3 0h2v20h-2z"/></svg></span><strong>Boleto</strong><span>Brazil · <span data-payment-brl>Requires BRL</span></span></div>
+<div><span class="payment-option-mark payment-option-pix" aria-hidden="true">PIX</span><strong>Pix</strong><span>Brazil · <span data-payment-brl>Requires BRL</span></span></div>
 </div>
 <p>Choose your payment method on Stripe. Available options depend on your country, currency and device. Your payment details are entered securely on Stripe.</p>
+<p class="connection-note" id="checkout-currency-note">Pix and boleto require a payment in Brazilian reais (BRL).</p>
 <button type="submit" class="checkout-pay" id="checkout-pay">Continue to secure payment</button>
 <p class="checkout-feedback" id="checkout-feedback" role="status" hidden></p>
 </form><a class="checkout-return" href="./index.html#colecao">‹ Continue shopping</a>

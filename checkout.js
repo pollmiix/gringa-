@@ -5,6 +5,13 @@
   const products = new Map((window.STORE_PRODUCTS || []).map(product => [product.id,product]));
   const metadata = window.PRODUCT_DETAILS || {};
   const find = selector => document.querySelector(selector);
+  const payingInBRL=String(config.moeda || 'EUR').toUpperCase()==='BRL';
+  document.querySelectorAll('[data-payment-brl]').forEach(label=>{
+    label.textContent=payingInBRL?'Payments in BRL':'Requires BRL';
+  });
+  find('#checkout-currency-note').textContent=payingInBRL
+    ? 'Pix and boleto are offered on Stripe for eligible purchases in Brazil. Boleto payment confirmation may take longer.'
+    : `Your bag is priced in ${config.moeda || 'EUR'}. Pix and boleto require payment in Brazilian reais (BRL) and are not available for this currency.`;
   let submitting = false;
   let paymentRequest = null;
   const brand = config.nome && config.nome !== 'YOUR STORE' ? config.nome : 'ALOHAS';

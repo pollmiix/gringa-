@@ -28,9 +28,13 @@ Stripe e configure o novo token diretamente na Vercel.
   mostra apenas opções elegíveis para a conta, moeda, país, valor e dispositivo
   do cliente. Apple Pay e Google Pay também dependem do dispositivo/navegador.
   Não é possível garantir que todos os meios apareçam em todas as compras.
-- Pix exige cobrança em BRL. Os preços atuais estão em EUR, portanto não basta
-  ativar Pix no painel: antes, defina os preços em reais e ajuste a moeda da loja.
+- Pix e boleto exigem cobrança em BRL. Os preços atuais estão em EUR, portanto
+  não basta ativá-los no painel: defina os preços em reais e ajuste a moeda da loja.
   Não troque apenas a sigla EUR para BRL mantendo os valores importados.
+- A página lista Cartões, Apple Pay, Google Pay, Link, Boleto e Pix como opções
+  da integração. A escolha efetiva acontece no checkout hospedado da Stripe.
+  A indicação sobre BRL acompanha a moeda configurada; os logotipos e nomes não
+  significam que métodos incompatíveis com a compra serão oferecidos.
 - A chave precisa permitir criar e consultar Checkout Sessions e as operações
   de pagamento correspondentes. O modelo Pagamentos únicos é o ponto de partida.
 - Faça primeiro uma implantação de teste com uma chave rk_test_.../sk_test_...
