@@ -115,6 +115,11 @@ if (!product) {
   Object.entries(facts).filter(([,value]) => value).forEach(([key,value]) => { const row = document.createElement('div'); const term = document.createElement('dt'); term.textContent = key; const definition = document.createElement('dd'); definition.textContent = String(value).charAt(0).toUpperCase()+String(value).slice(1); row.append(term,definition); $('#pdp-specifications').append(row); });
   $('#pdp-fit').textContent = details.fit ? `Fit guidance: ${details.fit}.` : 'Contact customer service for help choosing your size.';
   const sizes = product.sizes?.length ? product.sizes : ['One size'];
+  if (product.category === 'Bags') {
+    selectedSize = sizes[0];
+    $('#pdp-select-size').textContent = 'ADD TO BAG';
+    $('#pdp-description').textContent = `${product.name}. Explore every angle in the photo gallery.`;
+  }
   $('#pdp-size-options').style.setProperty('--size-count',sizes.length);
   $('#pdp-sizes-copy').textContent = `Listed sizes: ${sizes.join(' · ')}. Please confirm availability.`;
   photos.forEach((photo,i) => { const button = document.createElement('button'); button.type = 'button'; button.className = 'pdp-photo'; button.setAttribute('aria-label',`Enlarge product photo ${i+1}`); const img = document.createElement('img'); img.src = `./${photo.src}`; img.alt = `${product.name} — photo ${i+1}`; img.loading = i < 2 ? 'eager' : 'lazy'; if (photo.width && photo.height) { img.width = photo.width; img.height = photo.height; } button.append(img); button.addEventListener('click',() => { showZoom(i); openDialog($('#pdp-zoom'),button); }); $('#pdp-gallery').append(button); });
