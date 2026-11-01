@@ -9,8 +9,7 @@ const brand = config.nome || 'YOUR STORE';
 document.querySelectorAll('[data-brand]').forEach(el => { el.textContent = brand; });
 $('#year').textContent = new Date().getFullYear();
 function price(product) {
-  const override = config.precos?.[product.id];
-  const amount = typeof override === 'number' && override > 0 ? override : config.usarPrecosImportados && (config.moeda || 'EUR') === 'EUR' ? product.price : null;
+  const amount = window.StorePricing.unitPrice(product);
   if (!(amount > 0)) return 'Price on request';
   try { return new Intl.NumberFormat('en-GB',{style:'currency',currency:config.moeda || 'EUR'}).format(amount); } catch { return 'Price on request'; }
 }
@@ -106,7 +105,7 @@ if (!product) {
   const sameStyle = products.filter(p => metadata[p.id]?.family === details.family && p.category === product.category);
   const colourVariants = sameStyle.length ? sameStyle : [product];
   $('#pdp-title').textContent = product.name;
-  $('#pdp-price').textContent = price(product);
+  window.StorePricing.render($('#pdp-price'),product);
   $('#pdp-colour-count').textContent = `${colourVariants.length} ${colourVariants.length === 1 ? 'COLOUR' : 'COLOURS'}`;
   $('#pdp-status').textContent = details.preorder ? 'PRE-ORDER' : 'AVAILABILITY ON REQUEST';
   $('#pdp-colour-label').textContent = `Colour: ${details.colour ? details.colour.charAt(0).toUpperCase()+details.colour.slice(1) : product.name}`;
@@ -166,7 +165,7 @@ if (product) {
     const count = products.filter(p => metadata[p.id]?.family === metadata[item.id]?.family && p.category === item.category).length || 1;
     colours.textContent = `${count} ${count === 1 ? 'colour' : 'colours'}`; top.append(name,colours);
     const bottom = document.createElement('div'); bottom.className = 'recommendation-line';
-    const amount = document.createElement('span'); amount.textContent = price(item);
+    const amount = document.createElement('span'); window.StorePricing.render(amount,item);
     const availability = document.createElement('span'); availability.className = 'recommendation-availability'; availability.textContent = metadata[item.id]?.preorder ? 'Pre-order' : 'Availability on request';
     bottom.append(amount,availability); info.append(top,bottom); article.append(photo,info); fragment.append(article);
   });

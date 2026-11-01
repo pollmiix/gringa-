@@ -2,10 +2,39 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
 const handler = require('../api/checkout.js');
+const fs = require('node:fs');
+const path = require('node:path');
+const vm = require('node:vm');
 const productId = 'rosalind-contrast-vintage-effect-brown-leather-ballet-flats';
 const item = { id: productId, size: '38', quantity: 2 };
 const requestId = '12345678-1234-4234-8234-123456789012';
 const origin = 'https://gringa-olive.vercel.app';
+
+test('store-wide reductions use cents, preserve original prices and agree with server prices', () => {
+  const context = vm.createContext({ window: {} });
+  for (const file of ['loja-config.js', 'catalog.js']) {
+    vm.runInContext(fs.readFileSync(path.join(__dirname, '..', file), 'utf8'), context);
+  }
+  const pricing = context.window.StorePricing;
+  const config = context.window.LOJA_CONFIG;
+  const sample = { id: 'example', price: 100 };
+  assert.equal(pricing.quote(sample).reducedCents, 7000);
+  assert.equal(pricing.quote(sample).finalCents, 6300);
+  assert.equal(pricing.quote(sample).finalCents, 6300, 'Reloading or quoting twice must not apply discounts again');
+  assert.equal(sample.price, 100);
+  assert.equal(pricing.quote({ id: 'bag', price: 295 }).finalCents, 18585);
+  assert.equal(pricing.quote({ id: 'rounding', price: 19.99 }).finalCents, 1259);
+  assert.equal(pricing.quote({ id: 'invalid', price: null }), null);
+  config.precos.example = 200;
+  assert.equal(pricing.quote(sample).finalCents, 12600, 'Custom product prices also receive both reductions');
+  delete config.precos.example;
+  for (const product of context.window.STORE_PRODUCTS) {
+    const expected = pricing.quote(product);
+    if (!expected) continue;
+    const size = product.sizes?.[0] || 'One size';
+    assert.equal(handler.lineItems([{ id: product.id, size, quantity: 3 }])[0].amount, expected.finalCents, product.id);
+  }
+});
 
 async function call(overrides = {}) {
   const req = { method: 'POST', headers: { origin, 'content-type': 'application/json' }, body: { items: [item], requestId }, ...overrides };
@@ -27,7 +56,7 @@ test('checkout validation and Stripe boundary', async t => {
 
   await t.test('server uses catalog prices and ignores browser price and currency', () => {
     const lines = handler.lineItems([{ ...item, price: 0.01, currency: 'brl' }]);
-    assert.equal(lines[0].amount, 11200);
+    assert.equal(lines[0].amount, 7056);
     assert.equal(lines[0].currency, 'eur');
     assert.equal(lines[0].quantity, 2);
   });
@@ -61,7 +90,7 @@ test('checkout validation and Stripe boundary', async t => {
       const params = new URLSearchParams(options.body);
       const methods = [...params].filter(([key]) => key.startsWith('payment_method_types')).map(([,value]) => value);
       assert.deepEqual(methods, [], 'Current Stripe API rejects payment_method_types; use the methods enabled in the Dashboard');
-      assert.equal(params.get('line_items[0][price_data][unit_amount]'), '11200');
+      assert.equal(params.get('line_items[0][price_data][unit_amount]'), '7056');
       assert.equal(params.get('line_items[0][quantity]'), '2');
       assert.equal(params.get('line_items[0][price_data][currency]'), 'eur');
       assert.equal(params.get('shipping_options[0][shipping_rate_data][fixed_amount][amount]'), '0');

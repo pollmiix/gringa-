@@ -5,6 +5,9 @@
   const products = new Map((window.STORE_PRODUCTS || []).map(product => [product.id,product]));
   const metadata = window.PRODUCT_DETAILS || {};
   const find = selector => document.querySelector(selector);
+  if (config.descontoAdicionalPercentual > 0) {
+    find('.checkout-summary>.connection-note').textContent = `Extra ${config.descontoAdicionalPercentual}% discount already included. Review your final total on Stripe before confirming payment.`;
+  }
   let submitting = false;
   let paymentRequest = null;
   const brand = config.nome && config.nome !== 'YOUR STORE' ? config.nome : 'ALOHAS';

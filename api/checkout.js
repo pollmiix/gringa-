@@ -28,11 +28,8 @@ function lineItems(items) {
     const identity = `${item.id}|${item.size}`;
     if (seen.has(identity)) throw new Error('Duplicate shopping bag item.');
     seen.add(identity);
-    const custom = config.precos?.[product.id];
-    const price = typeof custom === 'number' && Number.isFinite(custom) && custom > 0 ? custom :
-      config.usarPrecosImportados && currency === 'eur' ? product.price : null;
-    const amount = Math.round(price * 100);
-    if (typeof price !== 'number' || !Number.isFinite(price) || !Number.isSafeInteger(amount) || amount < 1 || amount > 99999999) {
+    const amount = context.window.StorePricing.quote(product)?.finalCents;
+    if (!Number.isSafeInteger(amount) || amount < 1 || amount > 99999999) {
       throw new Error('This product has no confirmed price. Please contact the store.');
     }
     return { id: product.id, size: item.size, name: `${product.name} - Size ${item.size}`, quantity: item.quantity, amount, currency };

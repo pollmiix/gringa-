@@ -3,6 +3,9 @@ const config = window.LOJA_CONFIG || {};
 const products = Array.isArray(window.STORE_PRODUCTS) ? window.STORE_PRODUCTS : [];
 const $ = selector => document.querySelector(selector);
 const brand = config.nome || 'YOUR STORE';
+if (config.reducaoPrecosPercentual > 0 && config.descontoAdicionalPercentual > 0) {
+  $('.announcement').textContent = `Prices reduced by ${config.reducaoPrecosPercentual}% + extra ${config.descontoAdicionalPercentual}% off. Applied automatically.`;
+}
 document.querySelectorAll('[data-brand]').forEach(el => { el.textContent = brand; });
 document.title = `All products | ${brand}`;
 $('#year').textContent = new Date().getFullYear();
@@ -156,10 +159,7 @@ function updateCollection() {
   if (url.href !== window.location.href) { try { window.history.replaceState(null,'',url); } catch { /* Local file previews may restrict history updates. */ } }
 }
 function numericPrice(product) {
-  const custom = config.precos?.[product.id];
-  if (typeof custom === 'number' && Number.isFinite(custom) && custom > 0) return custom;
-  if (config.usarPrecosImportados && (config.moeda || 'EUR') === 'EUR' && typeof product.price === 'number' && product.price > 0) return product.price;
-  return null;
+  return window.StorePricing.unitPrice(product);
 }
 function price(product) {
   const value = numericPrice(product);
@@ -198,7 +198,7 @@ function appendCards(items, target = $('#products'), featured = false) {
     const name = document.createElement('a'); name.className = 'product-name'; name.href = `./product.html?product=${encodeURIComponent(product.id)}`; name.textContent = product.name;
     const meta = document.createElement('div'); meta.className = 'product-meta';
     const category = document.createElement('span'); category.textContent = product.category;
-    const amount = document.createElement('span'); amount.textContent = price(product);
+    const amount = document.createElement('span'); window.StorePricing.render(amount,product);
     if (featured) {
       const headline = document.createElement('div'); headline.className = 'featured-headline';
       const colours = document.createElement('span'); colours.className = 'featured-colours'; colours.textContent = `${featuredColours[product.id]} colours`;
@@ -273,7 +273,7 @@ function showTopFind(index) {
   $('#top-finds-editorial').alt = `Style inspiration: ${item.product.name}`;
   setImage($('#top-finds-product-image'),item.product,true);
   $('#top-finds-name').textContent = item.product.name;
-  $('#top-finds-price').textContent = price(item.product);
+  window.StorePricing.render($('#top-finds-price'),item.product);
   $('#top-finds-colours').textContent = `+${item.colours} colours`;
   [$('#top-finds-item'),$('#top-finds-model')].forEach(button => button.setAttribute('aria-label',`View details: ${item.product.name}`));
   $('#top-finds-status').textContent = `${topFindIndex+1} of ${topFinds.length}: ${item.product.name}`;

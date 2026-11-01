@@ -30,13 +30,13 @@
   const drawer = document.createElement('dialog'); drawer.className = 'cart-drawer'; drawer.id = 'cart-drawer'; drawer.setAttribute('aria-labelledby','cart-title');
   drawer.innerHTML = `<div class="cart-drawer-layout"><header class="cart-heading"><h2 id="cart-title">YOUR BAG <span id="cart-count"></span></h2><button class="cart-close" id="cart-close" type="button" aria-label="Close shopping bag">×</button></header><div class="cart-scroll"><div id="cart-items" aria-label="Shopping bag items"></div><p class="cart-empty" id="cart-empty">Your bag is empty.<br><a href="./index.html#colecao">Explore the collection</a></p><section class="cart-recommendations" aria-labelledby="cart-recommendations-title"><div class="cart-recommendations-heading"><h3 id="cart-recommendations-title">RECOMMENDED FOR YOU</h3><div class="category-arrows"><button type="button" id="cart-rec-prev" aria-label="Previous recommendations" aria-controls="cart-rec-track" disabled>‹</button><button type="button" id="cart-rec-next" aria-label="Next recommendations" aria-controls="cart-rec-track">›</button></div></div><div class="cart-rec-track" id="cart-rec-track" tabindex="0" role="region" aria-label="Recommended products"></div></section></div><div class="cart-totals"><p class="cart-shipping" id="cart-shipping"></p><div class="cart-checkout"><div class="cart-subtotal"><span>Subtotal</span><strong id="cart-subtotal"></strong></div><p class="cart-checkout-note">Taxes, shipping and discounts confirmed at checkout.</p><button class="cart-checkout-button" id="cart-checkout" type="button">Check Out</button><p class="cart-checkout-status" id="cart-checkout-status" role="status" hidden></p></div></div></div>`;
   document.body.append(drawer);
+  if (config.descontoAdicionalPercentual > 0) {
+    drawer.querySelector('.cart-checkout-note').textContent = `Extra ${config.descontoAdicionalPercentual}% discount already included. Taxes and shipping confirmed at checkout.`;
+  }
   const find = selector => drawer.querySelector(selector);
   let lastTrigger = null;
   function unitPrice(product) {
-    const custom = config.precos?.[product.id];
-    if (typeof custom === 'number' && Number.isFinite(custom) && custom > 0) return custom;
-    if (config.usarPrecosImportados && (config.moeda || 'EUR') === 'EUR' && typeof product.price === 'number' && product.price > 0) return product.price;
-    return null;
+    return window.StorePricing.unitPrice(product);
   }
   function money(value) {
     if (value === null) return 'Price on request';
