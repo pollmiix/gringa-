@@ -12,6 +12,7 @@ window.LOJA_CONFIG = {
     endereco: 'Avenida Brasil, 1271, Sala Le 35 Piso Estaleiro, Centro, Balneário Camboriú - SC, CEP 88330-900'
   },
   estoqueConfirmado: true,
+  impostosIncluidos: true,
   entrega: { paises: ['US'], prazoMinDiasUteis: 3, prazoMaxDiasUteis: 7 },
   // Optional contact number with country code; digits only.
   whatsapp: '',

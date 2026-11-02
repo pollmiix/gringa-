@@ -14,6 +14,7 @@ corresponder à empresa, ao estoque e à operação reais.
 - Endereço: Avenida Brasil, 1271, Sala Le 35 Piso Estaleiro, Centro,
   Balneário Camboriú — SC, CEP 88330-900.
 - Todos os produtos anunciados em estoque.
+- Impostos e taxas de importacao incluidos no preco, conforme confirmado pelo lojista.
 - Entrega nos Estados Unidos, frete grátis, prazo total de 3 a 7 dias úteis após
   confirmação do pagamento, incluindo preparação e transporte.
 
@@ -39,8 +40,9 @@ corresponder à empresa, ao estoque e à operação reais.
    em EUR, sem conversao. Site, carrinho, Stripe e feed precisam usar EUR.
    No Merchant Center, configurar o mercado US e a conversao de moeda do Google
    quando aplicavel; nao trocar apenas o simbolo por USD. As politicas publicas
-   estao em ingles. Confirmar impostos de importacao e origem do despacho antes
-   de anunciar; frete gratis nao significa automaticamente impostos incluidos.
+   estao em ingles. O lojista confirmou impostos e taxas de importacao incluidos
+   no preco, sem cobranca adicional na entrega. Cumprir isso com a transportadora
+   e os documentos aduaneiros; confirmar a origem real do despacho nos cadastros.
 2. **Cadastro oficial:** conferir razão social, CNPJ, endereço e situação
    cadastral no comprovante da Receita e usar os mesmos dados no Merchant.
 3. **Stripe:** o checkout mostrado antes nesta sessão usava o nome G. DIGITAL.
