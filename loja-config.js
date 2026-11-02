@@ -2,7 +2,8 @@
 // Store identity. All storefront files and product images use local paths.
 window.LOJA_CONFIG = {
   nome: 'Aloha',
-  siteUrl: 'https://gringa-olive.vercel.app',
+  siteUrl: 'https://aloha-official.online',
+  dominioAnterior: 'https://gringa-olive.vercel.app',
   empresa: {
     razaoSocial: 'Aloha All Bless Confeccoes LTDA',
     cnpj: '02.115.915/0001-78',

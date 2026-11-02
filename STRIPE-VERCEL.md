@@ -1,61 +1,60 @@
-# Ativar o checkout na Vercel
+# Checkout e dominio da Aloha
 
-O checkout abre uma página hospedada pela Stripe. O servidor confere produtos,
-tamanhos, quantidades e preços usando o catálogo e loja-config.js publicados.
-Nenhum dado de cartão passa pelos arquivos da loja.
+Dominio principal: https://aloha-official.online
+Projeto existente na Vercel: gringa-, conectado ao repositorio pollmiix/gringa-.
+Nao criar outro projeto: os produtos, imagens e a funcao de pagamento continuam
+no mesmo projeto e usam a STRIPE_SECRET_KEY ja cadastrada em Production.
 
-1. Na Vercel, abra o projeto correspondente a gringa-olive.vercel.app.
-2. Em Settings > Environment Variables, adicione STRIPE_SECRET_KEY com o token
-   completo da chave restrita rk_live_... criada para pagamentos únicos. Cadastre
-   apenas em Production. Não use o identificador mk_..., nem a chave pk_live_....
-3. Adicione SITE_URL com o valor https://gringa-olive.vercel.app.
-4. Salve e faça Redeploy da implantação mais recente para aplicar as variáveis.
+## Enderecos e seguranca
 
-Nunca coloque a chave privada no GitHub, em loja-config.js ou no chat.
-Se não guardou o token completo quando ele foi exibido, crie outra chave na
-Stripe e configure o novo token diretamente na Vercel.
+- loja-config.js define siteUrl como o dominio principal. Esse valor tem
+  prioridade sobre uma variavel SITE_URL antiga da Vercel.
+- A API aceita somente a origem principal e o dominio anterior explicitamente
+  cadastrado em dominioAnterior. Nao usa Host nem dominios enviados pelo cliente
+  para escolher livremente uma URL de retorno.
+- Os retornos de pagamento e cancelamento ficam no dominio confiavel que iniciou
+  o checkout. Assim a loja antiga continua utilizavel durante a ativacao HTTPS.
+- SITE_URL pode ser atualizado para https://aloha-official.online na Vercel,
+  mas nao e necessario trocar ou expor a chave Stripe para mudar o dominio.
+- Para testes em um dominio Preview, configure siteUrl na branch isolada de
+  teste para esse dominio exato e use somente uma chave de teste nesse ambiente.
 
-## Conferência antes de receber pagamentos
+## Conferencias externas
 
-- Os preços atuais estão em EUR; alterar a moeda não converte os valores.
-- O catálogo é uma cópia local, sem consulta de estoque ou reserva de produtos.
-  Confira preços, estoque, pré-vendas e prazos antes de abrir as vendas.
-- O servidor oferece frete gratuito aos dez países listados no checkout.
-  Frete pago ainda precisa ser implementado. Não há cálculo automático de
-  impostos; configure a tributação adequada antes de abrir as vendas.
-- A loja exibe cartoes, Apple Pay, Google Pay e Link. Os metodos efetivamente
-  oferecidos sao controlados no Dashboard da Stripe, conforme elegibilidade.
-  A API atual da conta rejeita payment_method_types; esse parametro nao deve
-  ser enviado ao criar a sessao de checkout.
-- Mantenha Pix e boleto desativados em Settings > Payment methods na Stripe.
-  Eles foram removidos da pagina. Os precos continuam em EUR.
-- A chave precisa permitir criar e consultar Checkout Sessions e as operações
-  de pagamento correspondentes. O modelo Pagamentos únicos é o ponto de partida.
-- Faça primeiro uma implantação de teste com uma chave rk_test_.../sk_test_...
-  no ambiente Preview, SITE_URL apontando ao domínio exato dessa implantação,
-  e cartões de teste da Stripe. Não use cartão real para testes.
-- A conta Stripe deve estar liberada para receber pagamentos reais.
+1. Vercel > projeto gringa- > Domains: adicionar aloha-official.online ao
+   projeto correto. Seguir exatamente os registros DNS mostrados pela Vercel;
+   aguardar verificacao e emissao do certificado HTTPS. Nao adivinhar IPs.
+2. Abrir https://aloha-official.online e confirmar que exibe esta mesma loja,
+   com HTTPS valido, imagens e /api/checkout disponiveis.
+3. Na Stripe, conferir empresa, nome publico, URL do site, suporte e links das
+   politicas. O cadastro legal/bancario nao e alterado pelo codigo da loja.
+   Conferir Google Pay/Apple Pay e cadastrar o dominio se solicitado pela
+   integracao utilizada. Nao inventar um arquivo de verificacao Apple Pay.
+4. No Merchant Center, verificar/reivindicar o novo dominio, atualizar a fonte
+   de produtos e suas URLs, informar o novo sitemap e os links das politicas.
+   Manter mercado US, precos EUR, frete gratis, entrega total de 3 a 7 dias uteis
+   e impostos/taxas de importacao incluidos, conforme confirmado pelo lojista.
+5. Depois que o HTTPS do novo dominio estiver funcionando, configurar o
+   redirecionamento do dominio antigo na Vercel, preservando caminhos e consultas.
+   Nao redirecionar clientes para um dominio cujo HTTPS ainda esteja falhando.
 
-## Pedidos e confirmação
+## Operacao
 
-A página de retorno consulta a Stripe no servidor antes de mostrar pagamento
-confirmado; parâmetros de URL não comprovam pagamento. O carrinho é preservado
-para não apagar itens adicionados em outra aba.
+O checkout e hospedado pela Stripe. Os precos sao validados no servidor; nao
+ha campos locais de cartao. Os metodos elegiveis sao controlados no Dashboard
+Stripe; payment_method_types nao deve ser enviado pela API atual desta conta.
+Pix e boleto permanecem desativados. Precos em EUR, imposto/importacao incluidos
+no valor informado, frete zero e entrega apenas nos Estados Unidos.
 
-Esta integração não possui banco de pedidos, e-mail de confirmação próprio,
-baixa de estoque ou despacho automático. Acompanhe cada pagamento e os dados
-de entrega no Dashboard da Stripe e processe o pedido manualmente. Antes de
-automatizar o despacho, implemente um webhook com validação de assinatura,
-registro persistente do pedido e tratamento idempotente de eventos. Não use
-a visita à página de retorno como gatilho para enviar mercadorias.
+A pagina de retorno consulta o pagamento no servidor. Nao ha banco proprio de
+pedidos, baixa automatica de estoque, despacho ou email automatico da loja.
+Acompanhar pagamentos, dados de entrega, devolucoes e reembolsos no Dashboard
+Stripe e no atendimento. A visita a uma pagina de retorno nao autoriza despacho.
 
-## Publicação
+Nunca publicar STRIPE_SECRET_KEY no GitHub, arquivos da loja ou mensagens.
+Chaves expostas precisam ser substituidas diretamente no painel.
 
-O repositório deve estar conectado ao projeto Vercel, com branch de produção
-main. As funções api/checkout.js são publicadas junto com os arquivos estáticos.
-Não configure um diretório de saída que exclua essas funções.
+## Verificacao local
 
-## Verificação local
-
-Com Node.js 24 instalado: npm test. Os testes usam respostas simuladas da Stripe
-e não fazem cobranças nem precisam de credenciais.
+Os testes em tests/stripe-checkout.test.cjs usam respostas Stripe simuladas e
+nao fazem cobrancas. Node 24: node --test --test-isolation=none tests/stripe-checkout.test.cjs.

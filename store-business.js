@@ -2,7 +2,7 @@
   'use strict';
   const config = window.LOJA_CONFIG;
   if (!config?.empresa) return;
-  const base = config.siteUrl || 'https://gringa-olive.vercel.app';
+  const base = config.siteUrl || 'https://aloha-official.online';
   const company = config.empresa;
   const returns = {
     '@type': 'MerchantReturnPolicy', '@id': `${base}/#return-policy`,

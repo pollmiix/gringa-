@@ -8,7 +8,7 @@ const vm = require('node:vm');
 const productId = 'rosalind-contrast-vintage-effect-brown-leather-ballet-flats';
 const item = { id: productId, size: '38', quantity: 2 };
 const requestId = '12345678-1234-4234-8234-123456789012';
-const origin = 'https://gringa-olive.vercel.app';
+const origin = 'https://aloha-official.online';
 
 test('store-wide reductions use cents, preserve original prices and agree with server prices', () => {
   const context = vm.createContext({ window: {} });
@@ -74,6 +74,8 @@ test('checkout validation and Stripe boundary', async t => {
   await t.test('rejects foreign origins, malformed bodies and unsupported methods', async () => {
     global.fetch = () => { throw new Error('Stripe must not be called'); };
     assert.equal((await call({ headers: { origin: 'https://other.example', 'content-type': 'application/json' } })).code, 403);
+    assert.equal((await call({ headers: { origin: `${origin}.other.example`, 'content-type': 'application/json' } })).code, 403);
+    assert.equal((await call({ headers: { 'content-type': 'application/json' } })).code, 403);
     assert.equal((await call({ headers: { origin, 'content-type': 'text/plain' } })).code, 415);
     assert.equal((await call({ body: '{broken' })).code, 400);
     assert.equal((await call({ body: null })).code, 400);
@@ -108,6 +110,21 @@ test('checkout validation and Stripe boundary', async t => {
     assert.equal(result.headers['Cache-Control'], 'no-store');
     await call();
     assert.equal(calls, 2);
+  });
+  await t.test('domain migration keeps return URLs on the trusted requesting domain despite an old SITE_URL', async () => {
+    const previous = 'https://gringa-olive.vercel.app';
+    process.env.SITE_URL = previous;
+    try {
+      for (const requestingOrigin of [origin, previous]) {
+        global.fetch = async (url, options) => {
+          const params = new URLSearchParams(options.body);
+          assert.equal(params.get('success_url'), `${requestingOrigin}/payment-result.html?session_id={CHECKOUT_SESSION_ID}`);
+          assert.equal(params.get('cancel_url'), `${requestingOrigin}/checkout.html?payment=cancelled`);
+          return { ok: true, json: async () => ({ url: 'https://checkout.stripe.com/c/pay/example' }) };
+        };
+        assert.equal((await call({ headers: { origin: requestingOrigin, 'content-type': 'application/json' } })).code, 200);
+      }
+    } finally { process.env.SITE_URL = origin; }
   });
   await t.test('a browser success parameter is not proof of payment', async () => {
     global.fetch = async () => ({ ok: true, json: async () => ({ payment_status: 'unpaid', status: 'open' }) });

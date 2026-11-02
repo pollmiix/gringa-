@@ -79,7 +79,9 @@ async function handler(req, res) {
   if (!/^(sk|rk)_(live|test)_[A-Za-z0-9]+$/.test(key)) {
     return reply(res, 503, { error: 'Payments are not available yet. Please try again later.' });
   }
-  const site = process.env.SITE_URL || 'https://gringa-olive.vercel.app';
+  // The deployed store configuration owns the canonical domain. An old
+  // SITE_URL environment value must not send the new domain back to Vercel.
+  const site = config.siteUrl || process.env.SITE_URL || 'https://aloha-official.online';
   let origin;
   try {
     const url = new URL(site);
@@ -98,7 +100,13 @@ async function handler(req, res) {
     } catch { return reply(res, 502, { error: 'Unable to confirm payment. Please try again.' }); }
   }
 
-  if (req.headers.origin !== origin) return reply(res, 403, { error: 'Invalid request origin.' });
+  const requestOrigin = req.headers.origin;
+  if (typeof requestOrigin !== 'string' || (requestOrigin !== origin && requestOrigin !== config.dominioAnterior)) {
+    return reply(res, 403, { error: 'Invalid request origin.' });
+  }
+  // Keep the previous domain usable during DNS/SSL activation. Only these
+  // exact, trusted origins can create a checkout or receive its return URLs.
+  origin = requestOrigin;
   if (!String(req.headers['content-type'] || '').startsWith('application/json')) {
     return reply(res, 415, { error: 'Expected JSON.' });
   }
