@@ -1,4 +1,6 @@
 {
+  "framework": null,
+  "outputDirectory": ".",
   "buildCommand": "node scripts/build-merchant-feed.cjs",
   "functions": {
     "api/checkout.js": {
