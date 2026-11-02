@@ -1,0 +1,6 @@
+*.md
+*.ps1
+LEIA-ME.txt
+tests/
+catalog-source/
+.git/

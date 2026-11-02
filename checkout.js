@@ -10,9 +10,9 @@
   }
   let submitting = false;
   let paymentRequest = null;
-  const brand = config.nome || 'ALOHAS';
+  const brand = config.nome || 'Aloha';
   document.title = `Checkout | ${brand}`;
-  if (brand !== 'ALOHAS') find('#checkout-brand').textContent = brand;
+  find('#checkout-brand').textContent = brand;
   find('#checkout-brand').setAttribute('aria-label',`${brand} home`);
   find('#checkout-bag').addEventListener('click',event => cart.open(event.currentTarget));
   const node = (tag,className,text) => { const element=document.createElement(tag); if(className) element.className=className; if(text!==undefined) element.textContent=text; return element; };
@@ -26,7 +26,7 @@
     items.forEach(item => {
       const product=products.get(item.id);
       const value=cart.unitPrice(product);
-      const status=metadata[item.id]?.preorder?'Pre-order':'Availability on request';
+      const status=window.StoreAvailability.label(item.id);
       const url=cart.urlFor(`./product.html?product=${encodeURIComponent(item.id)}`);
       const row=node('article','checkout-summary-item');
       const photo=node('a','checkout-summary-photo');photo.href=url;photo.setAttribute('aria-label',product.name);
@@ -40,8 +40,8 @@
     });
     find('#checkout-products').replaceChildren(compact);find('#checkout-product-details').replaceChildren(detailed);
     const count=items.reduce((sum,item)=>sum+item.quantity,0);
-    find('#checkout-delivery-count').textContent=`${count} ${count===1?'PRODUCT':'PRODUCTS'} · DELIVERY TO BE CONFIRMED`;
-    find('#checkout-availability').textContent=items.some(item=>metadata[item.id]?.preorder)?'PRE-ORDER — Your bag contains pre-order items. Stock and shipping dates must be confirmed before payment.':'Stock and delivery options must be confirmed before payment.';
+    find('#checkout-delivery-count').textContent=`${count} ${count===1?'PRODUCT':'PRODUCTS'} · DELIVERY IN 3–7 BUSINESS DAYS`;
+    find('#checkout-availability').textContent='All advertised items are in stock. Free shipping throughout the United States; delivery in 3–7 business days after payment confirmation.';
     find('#checkout-summary-toggle').textContent = `Order summary · ${cart.money(cart.subtotal())}  ⌄`;
     find('#checkout-subtotal').textContent=cart.money(cart.subtotal());find('#checkout-total').textContent=cart.money(cart.subtotal());
     find('#checkout-shipping-total').textContent=config.freteGratis===true?'Free':'To be confirmed';
@@ -93,17 +93,6 @@
     find('#checkout-feedback').textContent='You returned from payment. Your shopping bag is still available. Check your payment status before trying again.';
   }
   find('#checkout-copyright').textContent=`Copyright © ${new Date().getFullYear()} ${brand} All Rights Reserved.`;
-  find('#checkout-chat').addEventListener('click',()=>{
-    const phone=String(config.whatsapp || '').replace(/\D/g,'');
-    if(phone){window.open(`https://wa.me/${phone}`,'_blank','noopener,noreferrer');return;}
-    find('#checkout-chat-feedback').hidden=false;
-    find('#checkout-chat-feedback').textContent='Customer service chat is not available yet. Contact details will be available here soon.';
-  });
-  const privacy=find('#checkout-privacy-dialog');
-  find('#checkout-privacy-open').addEventListener('click',()=>{privacy.showModal();document.body.classList.add('modal-open');});
-  find('#checkout-privacy-close').addEventListener('click',()=>privacy.close());
-  privacy.addEventListener('close',()=>{if(!document.querySelector('dialog[open]'))document.body.classList.remove('modal-open');find('#checkout-privacy-open').focus();});
-  privacy.addEventListener('click',event=>{if(event.target!==privacy)return;const rect=privacy.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)privacy.close();});
   window.addEventListener('store-cart-change',render);
   window.addEventListener('storage',event=>{if(event.key==='store-cart-v1')render();});
   render();

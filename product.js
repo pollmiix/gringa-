@@ -5,7 +5,7 @@ const metadata = window.PRODUCT_DETAILS || {};
 const collections = window.STORE_COLLECTIONS || [];
 const $ = selector => document.querySelector(selector);
 const productURL = product => `./product.html?product=${encodeURIComponent(product.id)}`;
-const brand = config.nome || 'ALOHAS';
+const brand = config.nome || 'Aloha';
 document.querySelectorAll('[data-brand]').forEach(el => { el.textContent = brand; });
 $('#year').textContent = new Date().getFullYear();
 function price(product) {
@@ -58,26 +58,6 @@ $('.search-toggle').addEventListener('click',event => {
   form.addEventListener('submit',submit => { submit.preventDefault(); const url = `./index.html?search=${encodeURIComponent(input.value)}#colecao`; location.href = window.StoreCart ? window.StoreCart.urlFor(url) : url; });
   $('#utility-copy').append(form); openDialog($('#utility-dialog'),event.currentTarget); input.focus();
 });
-const infoPanels = {
-  contact:['Contact customer service','Customer service contact details will be available here soon.'],
-  privacy:['Privacy Policy','Our privacy policy will be available before newsletter registration and online ordering open.'],
-  stores:['Our stores','Store locations and opening hours will be available here soon.'],
-  orders:['Track my order','Order tracking is not available yet. Please contact customer service for assistance.'],
-  returns:['Returns & refunds','Contact customer service to confirm return conditions before ordering.'],
-  shipping:['Shipping Policy','Contact customer service to confirm delivery options and costs before ordering.'],
-  terms:['Terms of Sale','Our terms of sale will be available before online ordering opens.'],
-  about:['About us','Explore our collection of shoes, bags, clothing and accessories.'],
-  feedback:['Share your feedback','Contact customer service to share your feedback about your shopping experience.']
-};
-document.querySelectorAll('[data-footer-info]').forEach(button => button.addEventListener('click',() => {
-  const panel = infoPanels[button.dataset.footerInfo]; showInfo(panel[0],panel[1],button);
-  const phone = String(config.whatsapp || '').replace(/\D/g,'');
-  if (button.dataset.footerInfo === 'contact' && phone) { const link = document.createElement('a'); link.href = `https://wa.me/${phone}`; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.textContent = 'Contact us on WhatsApp'; $('#utility-copy').replaceChildren(link); }
-}));
-function updateNewsletter() { $('#newsletter-join').disabled = !$('#newsletter-email').value.trim() || !$('#newsletter-email').validity.valid || !$('#newsletter-consent').checked; }
-$('#newsletter-email').addEventListener('input',updateNewsletter); $('#newsletter-consent').addEventListener('change',updateNewsletter);
-$('#newsletter-form').addEventListener('submit',event => { event.preventDefault(); if (!event.currentTarget.reportValidity()) return; $('#newsletter-status').hidden = false; $('#newsletter-status').textContent = 'Newsletter registration is not available yet. Please try again later.'; });
-updateNewsletter();
 const product = products.find(p => p.id === new URLSearchParams(location.search).get('product'));
 const details = product ? metadata[product.id] || {} : {};
 let selectedSize = '';
@@ -107,7 +87,7 @@ if (!product) {
   $('#pdp-title').textContent = product.name;
   window.StorePricing.render($('#pdp-price'),product);
   $('#pdp-colour-count').textContent = `${colourVariants.length} ${colourVariants.length === 1 ? 'COLOUR' : 'COLOURS'}`;
-  $('#pdp-status').textContent = details.preorder ? 'PRE-ORDER' : 'AVAILABILITY ON REQUEST';
+  $('#pdp-status').textContent = window.StoreAvailability.label(product.id).toUpperCase();
   $('#pdp-colour-label').textContent = `Colour: ${details.colour ? details.colour.charAt(0).toUpperCase()+details.colour.slice(1) : product.name}`;
   $('#pdp-description').textContent = `${product.name}. Explore every angle in the photo gallery and choose your preferred size.`;
   const facts = {Category:product.category,Colour:details.colour,Material:details.material,'Heel height':details.heel && details.heel !== '0' ? `${details.heel} cm` : '',Origin:details.origin};
@@ -120,7 +100,7 @@ if (!product) {
     $('#pdp-description').textContent = `${product.name}. Explore every angle in the photo gallery.`;
   }
   $('#pdp-size-options').style.setProperty('--size-count',sizes.length);
-  $('#pdp-sizes-copy').textContent = `Listed sizes: ${sizes.join(' · ')}. Please confirm availability.`;
+  $('#pdp-sizes-copy').textContent = `Sizes: ${sizes.join(' · ')}.`;
   photos.forEach((photo,i) => { const button = document.createElement('button'); button.type = 'button'; button.className = 'pdp-photo'; button.setAttribute('aria-label',`Enlarge product photo ${i+1}`); const img = document.createElement('img'); img.src = `./${photo.src}`; img.alt = `${product.name} — photo ${i+1}`; img.loading = i < 2 ? 'eager' : 'lazy'; if (photo.width && photo.height) { img.width = photo.width; img.height = photo.height; } button.append(img); button.addEventListener('click',() => { showZoom(i); openDialog($('#pdp-zoom'),button); }); $('#pdp-gallery').append(button); });
   colourVariants.forEach(item => { const link = document.createElement('a'); link.href = productURL(item); link.setAttribute('aria-label',item.name); if (item.id === product.id) link.setAttribute('aria-current','page'); const img = document.createElement('img'); img.src = `./${item.image}`; img.alt = metadata[item.id]?.colour || item.name; img.loading = 'lazy'; link.append(img); $('#pdp-colours').append(link); });
   $('#pdp-size-image').src = `./${photos[0].src}`;
@@ -130,15 +110,19 @@ if (!product) {
     button.className = 'size-option';
     const label = document.createElement('span'); label.className = 'size-option-label'; label.textContent = size;
     const amount = document.createElement('span'); amount.className = 'size-option-price'; amount.textContent = price(product);
-    const shipping = document.createElement('span'); shipping.className = 'size-option-shipping'; shipping.textContent = details.preorder ? 'Pre-order · Shipping date on request' : 'Availability on request';
-    button.append(label,amount,shipping); button.setAttribute('aria-pressed','false'); button.addEventListener('click',() => { selectedSize = size; $('#pdp-size-options').querySelectorAll('button').forEach(el => el.setAttribute('aria-pressed',String(el === button))); $('#pdp-select-size').textContent = 'ADD TO BAG'; $('#pdp-selection').hidden = false; $('#pdp-selection').textContent = `Selected size: ${size}. Availability is subject to confirmation.`; $('#pdp-change-size').hidden = false; $('#pdp-enquire').hidden = false; $('#pdp-size-dialog').close(); }); $('#pdp-size-options').append(button); });
+    const shipping = document.createElement('span'); shipping.className = 'size-option-shipping'; shipping.textContent = `${window.StoreAvailability.label(product.id)} · Delivery in 3–7 business days`;
+    button.append(label,amount,shipping); button.setAttribute('aria-pressed','false'); button.addEventListener('click',() => { selectedSize = size; $('#pdp-size-options').querySelectorAll('button').forEach(el => el.setAttribute('aria-pressed',String(el === button))); $('#pdp-select-size').textContent = 'ADD TO BAG'; $('#pdp-selection').hidden = false; $('#pdp-selection').textContent = `Selected size: ${size}. In stock.`; $('#pdp-change-size').hidden = false; $('#pdp-enquire').hidden = false; $('#pdp-size-dialog').close(); }); $('#pdp-size-options').append(button); });
   $('#pdp-select-size').addEventListener('click',event => {
     if (!selectedSize) { openDialog($('#pdp-size-dialog'),event.currentTarget); return; }
     if (window.StoreCart?.add(product.id,selectedSize)) window.StoreCart.open(event.currentTarget);
   });
   $('#pdp-change-size').addEventListener('click',event => openDialog($('#pdp-size-dialog'),event.currentTarget));
   $('#pdp-save').addEventListener('click',() => { wishlist = wishlist.includes(product.id) ? wishlist.filter(id => id !== product.id) : [...wishlist,product.id]; try { localStorage.setItem('store-wishlist',JSON.stringify(wishlist)); } catch {} updateSaved(); });
-  $('#pdp-enquire').addEventListener('click',event => { const phone = String(config.whatsapp || '').replace(/\D/g,''); if (phone) { const url = `https://wa.me/${phone}?text=${encodeURIComponent(`Hello! I would like to enquire about ${product.name}, size ${selectedSize}.`)}`; window.open(url,'_blank','noopener,noreferrer'); } else showInfo('Product enquiry','Online ordering is not available yet. Customer service contact details will be available here soon.',event.currentTarget); });
+  $('#pdp-enquire').hidden = false;
+  $('#pdp-enquire').addEventListener('click',() => {
+    const subject = encodeURIComponent(`Product enquiry: ${product.name}`);
+    location.href = `mailto:${config.empresa.email}?subject=${subject}`;
+  });
   updateSaved();
 }
 function recommendedProducts(current) {
@@ -166,7 +150,7 @@ if (product) {
     colours.textContent = `${count} ${count === 1 ? 'colour' : 'colours'}`; top.append(name,colours);
     const bottom = document.createElement('div'); bottom.className = 'recommendation-line';
     const amount = document.createElement('span'); window.StorePricing.render(amount,item);
-    const availability = document.createElement('span'); availability.className = 'recommendation-availability'; availability.textContent = metadata[item.id]?.preorder ? 'Pre-order' : 'Availability on request';
+    const availability = document.createElement('span'); availability.className = 'recommendation-availability'; availability.textContent = window.StoreAvailability.label(item.id);
     bottom.append(amount,availability); info.append(top,bottom); article.append(photo,info); fragment.append(article);
   });
   track.append(fragment); $('#pdp-recommendations').hidden = false;

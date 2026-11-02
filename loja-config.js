@@ -1,7 +1,18 @@
 
 // Store identity. All storefront files and product images use local paths.
 window.LOJA_CONFIG = {
-  nome: 'ALOHAS',
+  nome: 'Aloha',
+  siteUrl: 'https://gringa-olive.vercel.app',
+  empresa: {
+    razaoSocial: 'Aloha All Bless Confeccoes LTDA',
+    cnpj: '02.115.915/0001-78',
+    email: 'aloha82@gmail.com',
+    telefone: '(47) 3367-0297',
+    telefoneInternacional: '+554733670297',
+    endereco: 'Avenida Brasil, 1271, Sala Le 35 Piso Estaleiro, Centro, Balneário Camboriú - SC, CEP 88330-900'
+  },
+  estoqueConfirmado: true,
+  entrega: { paises: ['US'], prazoMinDiasUteis: 3, prazoMaxDiasUteis: 7 },
   // Optional contact number with country code; digits only.
   whatsapp: '',
   // Public Stripe key. Checkout still requires a server integration.
@@ -9,7 +20,7 @@ window.LOJA_CONFIG = {
   stripeChavePublicavel: 'pk_live_51UX118C3b4QRgsFmqQUGWaopd9AN0XfiaXXsEowbZtZMogLQkLkyTOA5w0HykBTBRgGKVdbJ2PCwgnBZaPohxxK400ZxKv0GCX',
   // Set true only if your store offers free shipping.
   freteGratis: true,
-  freteDescricao: 'Free Shipping Worldwide - DHL - 1–3 Business Days',
+  freteDescricao: 'Free shipping in the United States · Delivery in 3–7 business days after payment confirmation',
   // Imported prices use EUR. Changing this code does not convert prices.
   moeda: 'EUR',
   usarPrecosImportados: true,
@@ -60,3 +71,10 @@ window.StorePricing = (() => {
   }
   return { quote, unitPrice, render };
 })();
+
+// Availability is based on the merchant's current stock confirmation, not the
+// old preorder flags imported with the source catalogue.
+window.StoreAvailability = {
+  isPreorder: id => !window.LOJA_CONFIG.estoqueConfirmado && Boolean(window.PRODUCT_DETAILS?.[id]?.preorder),
+  label: id => window.LOJA_CONFIG.estoqueConfirmado ? 'In stock' : window.PRODUCT_DETAILS?.[id]?.preorder ? 'Pre-order' : 'Availability on request'
+};

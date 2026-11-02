@@ -2,7 +2,7 @@
 const config = window.LOJA_CONFIG || {};
 const products = Array.isArray(window.STORE_PRODUCTS) ? window.STORE_PRODUCTS : [];
 const $ = selector => document.querySelector(selector);
-const brand = config.nome || 'ALOHAS';
+const brand = config.nome || 'Aloha';
 if (config.reducaoPrecosPercentual > 0 && config.descontoAdicionalPercentual > 0) {
   $('.announcement').textContent = `Prices reduced by ${config.reducaoPrecosPercentual}% + extra ${config.descontoAdicionalPercentual}% off. Applied automatically.`;
 }
@@ -79,42 +79,9 @@ document.querySelectorAll('#menu-dialog, #utility-dialog').forEach(dialog => {
   });
 });
 $('#continue-shopping').addEventListener('click', () => $('#utility-dialog').close());
-const footerInfo = {
-  contact:{title:'Contact customer service',copy:'Customer service contact details will be available here soon.'},
-  orders:{title:'Track my order',copy:'Order tracking is not available yet. Please contact customer service for assistance.'},
-  returns:{title:'Returns & refunds',copy:'Please contact customer service for information about returns and refunds.'},
-  stores:{title:'Our stores',copy:'Store locations and opening hours will be available here soon.'},
-  privacy:{title:'Privacy Policy',copy:'Our privacy policy will be available here before newsletter registration and online ordering open.'},
-  shipping:{title:'Shipping Policy',copy:'Shipping destinations, delivery times and charges will be available before online ordering opens.'},
-  terms:{title:'Terms of Sale',copy:'Our terms of sale will be available here before online ordering opens.'},
-  about:{title:'About us',copy:'Explore our collection of shoes, bags, clothing and accessories. Contact customer service to learn more.'},
-  feedback:{title:'Share your feedback',copy:'Please contact customer service to share your feedback about your shopping experience.'}
-};
-document.querySelectorAll('[data-footer-info]').forEach(button => button.addEventListener('click', () => {
-  const panel = footerInfo[button.dataset.footerInfo];
-  $('#utility-title').textContent = panel.title; $('#utility-copy').textContent = panel.copy;
-  const phone = String(config.whatsapp || '').replace(/\D/g,'');
-  if (button.dataset.footerInfo === 'contact' && phone) {
-    const link = document.createElement('a'); link.href = `https://wa.me/${phone}`; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.textContent = 'Contact us on WhatsApp';
-    $('#utility-copy').replaceChildren(link);
-  }
-  openHeaderDialog($('#utility-dialog'),button);
-}));
 collections.forEach(collection => {
   const link = collectionLink(collection); link.textContent = collection.name; $('#footer-categories').append(link);
 });
-function updateNewsletterButton() {
-  $('#newsletter-join').disabled = !$('#newsletter-email').validity.valid || !$('#newsletter-email').value.trim() || !$('#newsletter-consent').checked;
-}
-$('#newsletter-email').addEventListener('input',updateNewsletterButton);
-$('#newsletter-consent').addEventListener('change',updateNewsletterButton);
-$('#newsletter-form').addEventListener('submit', event => {
-  event.preventDefault();
-  if (!event.currentTarget.reportValidity()) return;
-  $('#newsletter-status').hidden = false;
-  $('#newsletter-status').textContent = 'Newsletter registration is not available yet. Please try again later.';
-});
-updateNewsletterButton();
 const previousCategories = $('#categories-prev');
 const nextCategories = $('#categories-next');
 function updateCategoryArrows() {
@@ -204,7 +171,7 @@ function appendCards(items, target = $('#products'), featured = false) {
       const colours = document.createElement('span'); colours.className = 'featured-colours'; colours.textContent = `${featuredColours[product.id]} colours`;
       headline.append(name,colours);
       const bottom = document.createElement('div'); bottom.className = 'featured-bottom';
-      const availability = document.createElement('span'); availability.className = 'featured-availability'; availability.textContent = 'Availability on request';
+      const availability = document.createElement('span'); availability.className = 'featured-availability'; availability.textContent = window.StoreAvailability.label(product.id);
       bottom.append(amount,availability); info.append(headline,bottom);
     } else { meta.append(category,amount); info.append(name,meta); }
     card.append(imageButton,info); fragment.append(card);

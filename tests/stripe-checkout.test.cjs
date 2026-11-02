@@ -94,7 +94,8 @@ test('checkout validation and Stripe boundary', async t => {
       assert.equal(params.get('line_items[0][quantity]'), '2');
       assert.equal(params.get('line_items[0][price_data][currency]'), 'eur');
       assert.equal(params.get('shipping_options[0][shipping_rate_data][fixed_amount][amount]'), '0');
-      assert.equal(params.get('shipping_address_collection[allowed_countries][0]'), 'BR');
+      assert.equal(params.get('shipping_address_collection[allowed_countries][0]'), 'US');
+      assert.equal(params.get('shipping_address_collection[allowed_countries][1]'), null, 'Only the merchant-confirmed destination may be offered');
       assert.equal(params.get('success_url'), `${origin}/payment-result.html?session_id={CHECKOUT_SESSION_ID}`);
       assert.equal(params.get('line_items[0][price_data][product_data][metadata][size]'), '38');
       if (firstKey) assert.equal(options.headers['Idempotency-Key'], firstKey);

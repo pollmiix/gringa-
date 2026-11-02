@@ -125,10 +125,10 @@ async function handler(req, res) {
     'shipping_options[0][shipping_rate_data][type]': 'fixed_amount',
     'shipping_options[0][shipping_rate_data][fixed_amount][amount]': '0',
     'shipping_options[0][shipping_rate_data][fixed_amount][currency]': lines[0].currency,
-    'shipping_options[0][shipping_rate_data][display_name]': 'Free shipping'
+    'shipping_options[0][shipping_rate_data][display_name]': 'Free shipping in the United States (3-7 business days)'
   });
-  // Match the destination countries offered by the storefront.
-  ['BR', 'US', 'GB', 'CA', 'PT', 'ES', 'FR', 'DE', 'IT', 'AU'].forEach((country, index) => {
+  // Match the merchant-confirmed delivery region.
+  config.entrega.paises.forEach((country, index) => {
     params.set(`shipping_address_collection[allowed_countries][${index}]`, country);
   });
   lines.forEach((line, index) => {
