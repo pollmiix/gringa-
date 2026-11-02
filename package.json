@@ -3,5 +3,8 @@
   "private": true,
   "version": "1.0.0",
   "engines": { "node": "24.x" },
-  "scripts": { "test": "node --test tests/stripe-checkout.test.cjs" }
+  "scripts": {
+    "build": "node scripts/build-merchant-feed.cjs",
+    "test": "node --test tests/stripe-checkout.test.cjs tests/merchant-feed.test.cjs"
+  }
 }

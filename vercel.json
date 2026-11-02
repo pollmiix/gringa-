@@ -1,4 +1,5 @@
 {
+  "buildCommand": "node scripts/build-merchant-feed.cjs",
   "functions": {
     "api/checkout.js": {
       "includeFiles": "{catalog.js,loja-config.js}",

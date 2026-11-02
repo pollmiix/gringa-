@@ -89,7 +89,7 @@ if (!product) {
   $('#pdp-colour-count').textContent = `${colourVariants.length} ${colourVariants.length === 1 ? 'COLOUR' : 'COLOURS'}`;
   $('#pdp-status').textContent = window.StoreAvailability.label(product.id).toUpperCase();
   $('#pdp-colour-label').textContent = `Colour: ${details.colour ? details.colour.charAt(0).toUpperCase()+details.colour.slice(1) : product.name}`;
-  $('#pdp-description').textContent = `${product.name}. Explore every angle in the photo gallery and choose your preferred size.`;
+  $('#pdp-description').textContent = window.StoreDescriptions.describe(product);
   const facts = {Category:product.category,Colour:details.colour,Material:details.material,'Heel height':details.heel && details.heel !== '0' ? `${details.heel} cm` : '',Origin:details.origin};
   Object.entries(facts).filter(([,value]) => value).forEach(([key,value]) => { const row = document.createElement('div'); const term = document.createElement('dt'); term.textContent = key; const definition = document.createElement('dd'); definition.textContent = String(value).charAt(0).toUpperCase()+String(value).slice(1); row.append(term,definition); $('#pdp-specifications').append(row); });
   $('#pdp-fit').textContent = details.fit ? `Fit guidance: ${details.fit}.` : 'Contact customer service for help choosing your size.';
@@ -97,7 +97,6 @@ if (!product) {
   if (product.category === 'Bags') {
     selectedSize = sizes[0];
     $('#pdp-select-size').textContent = 'ADD TO BAG';
-    $('#pdp-description').textContent = `${product.name}. Explore every angle in the photo gallery.`;
   }
   $('#pdp-size-options').style.setProperty('--size-count',sizes.length);
   $('#pdp-sizes-copy').textContent = `Sizes: ${sizes.join(' · ')}.`;
@@ -112,6 +111,11 @@ if (!product) {
     const amount = document.createElement('span'); amount.className = 'size-option-price'; amount.textContent = price(product);
     const shipping = document.createElement('span'); shipping.className = 'size-option-shipping'; shipping.textContent = `${window.StoreAvailability.label(product.id)} · Delivery in 3–7 business days`;
     button.append(label,amount,shipping); button.setAttribute('aria-pressed','false'); button.addEventListener('click',() => { selectedSize = size; $('#pdp-size-options').querySelectorAll('button').forEach(el => el.setAttribute('aria-pressed',String(el === button))); $('#pdp-select-size').textContent = 'ADD TO BAG'; $('#pdp-selection').hidden = false; $('#pdp-selection').textContent = `Selected size: ${size}. In stock.`; $('#pdp-change-size').hidden = false; $('#pdp-enquire').hidden = false; $('#pdp-size-dialog').close(); }); $('#pdp-size-options').append(button); });
+  // Feed links identify an exact size without adding anything to the bag.
+  const requestedSize = new URLSearchParams(location.search).get('size');
+  if (requestedSize && sizes.includes(requestedSize) && product.category !== 'Bags') {
+    [...$('#pdp-size-options').querySelectorAll('button')].find(button => button.querySelector('.size-option-label').textContent === requestedSize)?.click();
+  }
   $('#pdp-select-size').addEventListener('click',event => {
     if (!selectedSize) { openDialog($('#pdp-size-dialog'),event.currentTarget); return; }
     if (window.StoreCart?.add(product.id,selectedSize)) window.StoreCart.open(event.currentTarget);

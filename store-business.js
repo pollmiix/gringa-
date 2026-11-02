@@ -33,7 +33,7 @@
     const canonical = document.createElement('link'); canonical.rel = 'canonical'; canonical.href = url; document.head.append(canonical);
     structured('product-offer', {
       '@context': 'https://schema.org', '@type': 'Product', name: product.name,
-      image: [`${base}/${product.image}`], description: product.name,
+      image: (window.PRODUCT_GALLERIES?.[product.id] || [{src:product.image}]).map(photo => `${base}/${photo.src}`), description: window.StoreDescriptions?.describe(product) || product.name,
       sku: product.id, category: product.category, url,
       offers: { '@type': 'Offer', url, price: (quote.finalCents / 100).toFixed(2),
         priceCurrency: config.moeda || 'EUR', itemCondition: 'https://schema.org/NewCondition',
